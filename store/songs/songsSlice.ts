@@ -1,5 +1,5 @@
-import { UiSong } from "@/interfaces/playlist.interface";
-import { createEntityAdapter, createSlice, EntityState, nanoid, PayloadAction } from "@reduxjs/toolkit";
+import { UiSong } from "@/interfaces/song.interface";
+import { createEntityAdapter, createSlice, EntityState, PayloadAction } from "@reduxjs/toolkit";
 
 type SearchEntry = {
 	songIds: string[],

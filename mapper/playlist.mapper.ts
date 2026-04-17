@@ -1,5 +1,6 @@
 import { getPlaylistCover } from "@/helpers/getPlaylistCover";
-import { AlbumCollection, LikedCollection, Playlist, PlaylistCollection, UiAlbum, UiSong } from "@/interfaces/playlist.interface";
+import { AlbumCollection, LikedCollection, PlaylistCollection } from "@/interfaces/collection.interface";
+import { Playlist, UiAlbum, UiSong } from "@/interfaces/song.interface";
 
 export const mapPlaylistToCollection = (playlist: Playlist, entities: Record<string, UiSong>): PlaylistCollection => {
 

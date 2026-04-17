@@ -8,11 +8,11 @@ type Params = {
     artistName: string
 }
 
-export default async function Channel({params}: {params: Params}) {
+export default async function Channel({params}: {params: Promise<Params>}) {
 
-    const artistId = params.id;
+    const { id } = await params;
     
-    const response = await channelService(artistId)
+    const response = await channelService(id)
 
     if (!response.ok) return null;
 

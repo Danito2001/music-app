@@ -1,7 +1,6 @@
 "use client";
 
 import { Loading } from "@/components/common/Loading";
-import axiosServer from "@/utils/axios.client";
 import { useEffect, useState } from "react"
 import { ArtistCard } from "../../song/ArtistCard";
 import { Divider } from "@heroui/react";

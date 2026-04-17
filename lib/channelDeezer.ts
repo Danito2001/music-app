@@ -1,4 +1,5 @@
-import { ArtistResponseApi, DeezerAlbum, DeezerArtist, DeezerTrack, UiArtist } from "@/interfaces/playlist.interface";
+import { ArtistResponseApi, DeezerAlbum, DeezerArtist, DeezerTrack } from "@/interfaces/api.interface";
+import { UiArtist } from "@/interfaces/song.interface";
 import { mapDeezerAlbumToUiAlbum, mapDeezerArtistToUiArtist, mapDeezerTrackToUiSong } from "@/mapper/deezer.mapper";
 
 

@@ -9,7 +9,7 @@ import { MdFullscreen, MdFullscreenExit } from "react-icons/md";
 import { useDispatch } from "react-redux";
 
 
-export default function FullScreenImage({ cover, currentSongId }: { cover: string; currentSongId: string }) {
+export default function FullScreenImage({ cover }: { cover: string; }) {
 
     const [ isFullScreen, setIsFullScreen ] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null)

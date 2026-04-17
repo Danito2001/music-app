@@ -1,4 +1,3 @@
-import axiosServer from "@/utils/axios.client";
 import { useEffect, useState } from "react";
 import { Loading } from "../../../common/Loading";
 import { AlbumCard } from "../../song/AlbumCard";

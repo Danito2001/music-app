@@ -1,4 +1,3 @@
-import axiosServer from "@/utils/axios.client";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { upsertManyToCatalog } from "@/store/songs/songsSlice";

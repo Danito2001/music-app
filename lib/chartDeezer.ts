@@ -1,4 +1,4 @@
-import { ChartResponse, DeezerAlbum, DeezerArtist, DeezerTrack } from "@/interfaces/playlist.interface"
+import { ChartResponse, DeezerAlbum, DeezerArtist, DeezerTrack } from "@/interfaces/api.interface"
 import { mapDeezerAlbumToUiAlbum, mapDeezerArtistToUiArtist, mapDeezerTrackToUiSong } from "@/mapper/deezer.mapper"
 
 

@@ -1,4 +1,4 @@
-import { Playlist } from "@/interfaces/playlist.interface";
+import { Playlist } from "@/interfaces/song.interface";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface PlaylistState {

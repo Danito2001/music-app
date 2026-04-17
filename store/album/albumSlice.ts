@@ -1,4 +1,4 @@
-import { UiAlbum } from "@/interfaces/playlist.interface";
+import { UiAlbum } from "@/interfaces/song.interface";
 import { createEntityAdapter, createSlice, EntityState, PayloadAction } from "@reduxjs/toolkit";
 
 

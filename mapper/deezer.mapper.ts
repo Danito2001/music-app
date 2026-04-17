@@ -1,4 +1,5 @@
-import { DeezerAlbum, DeezerArtist, DeezerTrack, UiAlbum, UiArtist, UiSong } from "@/interfaces/playlist.interface";
+import { DeezerAlbum, DeezerArtist, DeezerTrack } from "@/interfaces/api.interface"
+import { UiAlbum, UiArtist, UiSong } from "@/interfaces/song.interface"
 
 export const mapDeezerArtistToUiArtist = (artist:DeezerArtist):UiArtist => {
     return {

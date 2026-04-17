@@ -98,7 +98,7 @@ export default function MusicPlayer() {
             )}
             >
                 <div className="flex flex-col items-center justify-center mx-4 lg:mx-20 lg:gap-x-20 lg:flex-row">
-                    <FullScreenImage cover={currentSong.cover} currentSongId={currentSong.id}/>
+                    <FullScreenImage cover={currentSong.cover}/>
 
                     <div className="flex-1 min-w-0 w-full">
                         <RelatedSongs queueSongs={queueSongs} />

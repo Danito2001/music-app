@@ -1,4 +1,3 @@
-// toast.slice.ts
 import { createSlice, nanoid, PayloadAction } from "@reduxjs/toolkit";
 
 export interface Toast {
