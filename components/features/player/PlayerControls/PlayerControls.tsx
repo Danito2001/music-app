@@ -1,0 +1,126 @@
+import { Icons } from "@/icons";
+import { Button } from "@heroui/react";
+import Image from "next/image";
+import Link from "next/link";
+import { MdOutlineSkipNext, MdOutlineSkipPrevious } from "react-icons/md";
+import { PlaybackOptions } from "../PlaybackOptions";
+import { pause, play } from "@/store/player/playerSlice";
+import { formatTime } from "@/helpers/formatTime";
+import { usePlayer } from "@/hooks/features/player/usePlayer";
+import usePlayerActions from "@/hooks/features/player/usePlayerActions";
+import { usePlayerOptions } from "@/hooks/features/player/usePlayerOptions";
+import { Loading } from "@/components/common/Loading";
+import { useFloatingPosition } from "@/hooks/common/useFloatingPosition";
+import { getOptionKey } from "@/helpers/getOptionKey";
+import { UiSong } from "@/interfaces/song.interface";
+import { useClickOutside } from "@/hooks/common/useClickOutside";
+
+interface PlayerProps {
+    currentSong: UiSong;
+    queueSongs: { queueId: string; song: UiSong }[];
+    loading: boolean;
+    error: boolean;
+}
+
+export default function PlayerControls({ queueSongs, currentSong, loading, error }: PlayerProps ) {
+
+    const floating = useFloatingPosition();
+    const options = usePlayerOptions(currentSong, queueSongs);  
+    const { isPlaying, dispatch, currentTime, duration } = usePlayer();
+    const { playNext, playPrev, likedSong, dislikedSong } = usePlayerActions();
+
+    useClickOutside(floating.menuRef, () => {
+        floating.closeOptions()
+    }, floating.optionsOpen)
+
+    const optionKey = getOptionKey("player", currentSong.id);
+    const isOpen = floating.optionsOpen === optionKey.type;
+    
+    return (
+        <>
+            <div className="flex items-center gap-x-2 mx-2">
+                <Button className="hover:bg-white/30" isIconOnly radius="full" onPress={() => playPrev(currentTime)}>
+                    <MdOutlineSkipPrevious size={30} className="mx-auto" />
+                </Button>
+                <Button className={`${error ? "opacity-80 pointer-events-none" : "hover:bg-white/30"}`} isIconOnly radius="full"
+                    onPress={() => !isPlaying ? dispatch(play()) : dispatch(pause())}
+                >
+                    {loading 
+                        ? <Loading type="player" />
+                        : (!isPlaying 
+                            ? <Icons.Play size={30} className="mx-auto" /> 
+                            : <Icons.Pause size={30} />
+                          )
+                    }
+
+                </Button>
+                <Button className="hover:bg-white/30" isIconOnly radius="full" onPress={playNext}>
+                    <MdOutlineSkipNext size={30} className="mx-auto" />
+                </Button>
+                <span className="text-xs text-white opacity-80 whitespace-nowrap hidden md:flex">{formatTime(currentTime)} / {formatTime(duration)}</span>
+            </div>
+            <div className="flex items-center min-w-0">
+                <Image
+                    className="rounded-md hidden sm:block"
+                    height={45}
+                    width={45}
+                    src={currentSong.cover}
+                    alt=""
+                />
+                <div className="mx-4 min-w-0">
+                    <h4 className="font-semibold truncate text-xs">{currentSong.title}</h4>
+                    <div className="flex gap-x-2 text-xs">
+                        <Link 
+                            href={`/channel/${currentSong.artistName}`} 
+                            className="opacity-85 whitespace-nowrap hover:underline"
+                        >
+                            {currentSong.artistName}
+                        </Link>
+                        <Link 
+                            href={`/browse/${currentSong.albumTitle}`} 
+                            className="opacity-85 hidden truncate sm:block hover:underline"
+                        >
+                            {currentSong.albumTitle}
+                        </Link>
+                    </div>
+                </div>
+                <div className="flex items-center">
+                    <Button
+                        className="hidden md:block hover:bg-white/30"
+                        radius="full"
+                        isIconOnly
+                        onPress={() => likedSong(currentSong.id)}
+                    >
+                        {currentSong.liked === "liked" ? <Icons.Liked size={22} className="mx-auto" /> : <Icons.Like size={22} className="mx-auto" />}
+                    </Button>
+                    <Button
+                        className="hidden md:block hover:bg-white/30"
+                        radius="full"
+                        isIconOnly
+                        onPress={() => dislikedSong(currentSong.id)}
+                    >
+                        {currentSong.liked === "disliked" ? <Icons.DisLiked size={22} className="mx-auto" /> : <Icons.Dislike size={22} className="mx-auto" />}
+                    </Button>
+                    <div className="relative flex items-center">
+                        <Button 
+                            ref={floating.buttonRef} 
+                            isIconOnly 
+                            onPress={() => floating.handleOpen(optionKey.type)} 
+                            className="hover:bg-white/30" 
+                            radius="full"
+                        >
+                            <Icons.Options size={20} className="mx-auto" />
+                        </Button>
+                        <PlaybackOptions
+                            open={isOpen}
+                            options={options}
+                            onSelect={floating.handleOptionSelect}
+                            position={floating.position}
+                            optionRef={floating.menuRef}
+                        />
+                    </div>
+                </div>
+            </div>
+        </>
+    )
+}

@@ -1,13 +1,141 @@
 @import "tailwindcss";
+@plugin './hero.ts';
+/* Note: You may need to change the path to fit your project structure */
+@source '../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
+@custom-variant dark (&:is(.dark *));
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+body, html {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  background: #000000;
 }
 
+:root {
+  --ytm-dark: #000000;
+  --ytm-red: #FF0000;
+  --ytm-white: #FFFFFF;
+  --ytm-gray: #AAAAAA;
+  --ytm-gray-dark: #303030;
+}
+
+.bg-primary {
+  @apply bg-[var(--ytm-dark)]
+}
+
+.button-primary {
+  @apply text-[var(--ytm-red)]
+}
+
+.text-accent {
+  @apply text-[var(--ytm-white)]
+}
+
+.text-soft {
+  @apply text-[var(--ytm-gray)]
+}
+
+.border-color {
+  @apply border border-[var(--ytm-gray-dark)]
+}
+
+.scrollbar { 
+  overflow-x: auto; 
+  padding-bottom: 10px; 
+  scroll-behavior: auto; 
+  scrollbar-color: transparent transparent; 
+  transition: scrollbar-color 0.3s; 
+}
+
+.scrollbar::-webkit-scrollbar { 
+  height: 8px; 
+  transition: opacity 0.3s; 
+  opacity: 0; 
+} 
+
+.scrollbar:hover::-webkit-scrollbar { opacity: 1; }
+
+.scrollbar::-webkit-scrollbar-track { 
+  border-radius: 6px; 
+  margin: 2px 0; 
+}
+
+.scrollbar::-webkit-scrollbar-thumb { 
+  background-color: #4e4d4d; 
+  border-radius: 6px; 
+  border: 2px solid #1a1a1a; 
+} 
+.scrollbar:hover { scrollbar-color: #4e4d4d #000000; }
+
+html::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+html::-webkit-scrollbar-thumb {
+  background-color: #4e4d4d;
+  border-radius: 6px;
+}
+
+html::-webkit-scrollbar-track {
+  background: var(--ytm-dark);
+}
+
+html {
+  scrollbar-width: auto;
+  scrollbar-color: #4e4d4d var(--ytm-dark);
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 2px solid transparent;
+  border-top: 2px solid #920202;
+  border-right: 2px solid #920202;
+  border-radius: 50%;
+  animation: spin 0.6s ease-in-out infinite;
+}
+
+.spinner.neutral {
+  width: 30px;
+  height: 30px;
+  border-top-color: #FFFFFF;
+  border-right: #FFFFFF;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* styles.css */
+.slider {
+  @apply w-20 h-1 bg-gray-300 rounded-lg appearance-none;
+}
+
+.slider::-webkit-slider-thumb {
+  appearance: none;
+  height: 10px;
+  width: 10px;
+  background: #FFFFFF; 
+  border-radius: 9999px;
+}
+
+.slider-audio {
+  @apply w-full h-1 bg-white/10 rounded-lg appearance-none;
+}
+
+.slider-audio::-webkit-slider-thumb {
+  appearance: none;
+  height: 10px;
+  width: 10px;
+  background: #ff0000; 
+  border-radius: 100%
+}
+
+
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -20,7 +148,8 @@
 }
 
 body {
-  background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+
