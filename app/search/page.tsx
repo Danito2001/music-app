@@ -4,16 +4,15 @@ import { searchService } from "@/services/deezer"
 import { Suspense } from "react";
 
 type Props = {
-	searchParams: {
-		q?: string;
-		limit?: number;
-	};
+	searchParams: Promise<{
+		q: string;
+		limit: number;
+	}>;
 };
 
 export default async function SearchPage({searchParams}: Props) {
 
-	const q = searchParams.q ?? "";
-	const limit = searchParams.limit ?? 0
+	const { q, limit } = await searchParams;
 
 	const data = await searchService({
 		q: q,

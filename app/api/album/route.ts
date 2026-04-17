@@ -1,4 +1,4 @@
-import { DeezerAlbum, DeezerTrack } from "@/interfaces/playlist.interface";
+import { DeezerAlbum, DeezerTrack } from "@/interfaces/api.interface";
 import { mapDeezerAlbumToUiAlbum, mapDeezerTrackToUiSong } from "@/mapper/deezer.mapper";
 import axiosServer from "@/utils/axios.server";
 

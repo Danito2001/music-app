@@ -1,16 +1,20 @@
-import { DeezerAlbum, DeezerArtist, DeezerTrack, UiArtist } from "@/interfaces/playlist.interface";
+import { DeezerAlbum, DeezerArtist, DeezerTrack } from "@/interfaces/api.interface";
+import { UiArtist } from "@/interfaces/song.interface";
 import { mapDeezerAlbumToUiAlbum, mapDeezerArtistToUiArtist, mapDeezerTrackToUiSong } from "@/mapper/deezer.mapper";
 import axiosServer from "@/utils/axios.server";
 
 
-export async function GET(req:Request, {params}: {params: { id: string }}) {
+export async function GET(
+    req:Request, 
+    {params}: {params: Promise<{ id: string }>}
+) {
 
     const { searchParams } = new URL(req.url);
 
-    const artistId = params.id;
+    const { id } = await params;
     const limit = searchParams.get("limit") || 5;
 
-    if (!artistId) {
+    if (!id) {
         return Response.json(
             { message: "Parametro requerido" },
             { status: 400 }
@@ -20,16 +24,16 @@ export async function GET(req:Request, {params}: {params: { id: string }}) {
     try {
 
         const [ artist, topTracks, albums, relatedArtist ] = await Promise.all([
-            axiosServer.get<DeezerArtist>(`/artist/${artistId}`),
-            axiosServer.get<{ data: DeezerTrack[] }>(`/artist/${artistId}/top?limit=${limit}`),
-            axiosServer.get<{ data: DeezerAlbum[] }>(`/artist/${artistId}/albums`),
-            axiosServer.get<{ data: DeezerArtist[] }>(`/artist/${artistId}/related`),
+            axiosServer.get<DeezerArtist>(`/artist/${id}`),
+            axiosServer.get<{ data: DeezerTrack[] }>(`/artist/${id}/top?limit=${limit}`),
+            axiosServer.get<{ data: DeezerAlbum[] }>(`/artist/${id}/albums`),
+            axiosServer.get<{ data: DeezerArtist[] }>(`/artist/${id}/related`),
         ])
 
 
         const tracks = topTracks.data.data.map(track => mapDeezerTrackToUiSong(track));
 
-        const formattedAlbums = albums.data.data.map(album => mapDeezerAlbumToUiAlbum(album, artistId));
+        const formattedAlbums = albums.data.data.map(album => mapDeezerAlbumToUiAlbum(album, id));
 
         const formattedRelated= relatedArtist.data.data.map(artist => mapDeezerArtistToUiArtist(artist));
 

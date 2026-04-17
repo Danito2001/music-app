@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { CollectionView, SourceType } from "@/interfaces/collection.interface";
 import { Option } from "@/interfaces/ui.interface";
+import { useRouter } from "next/navigation";
 
 interface PlaylistOptionsProps {
     collection: CollectionView; 
@@ -17,9 +18,10 @@ export const usePlaylistOptions = ({collection, playlistId, type} :PlaylistOptio
     const { removePlaylist, addPinned, removePinned } = usePlaylistActions();
     const { selectRandomSong, addPlaylistQueue } = usePlayerActions();
 
+    const router = useRouter();
+
     const isLiked = playlistId === "LM";
     const isAlbum = collection.type === "album";
-    
 
     const alreadyPinned = useSelector((state: RootState) =>
         playlistId ? state.playlist.pinnedPlaylists.includes(playlistId) : false
@@ -29,7 +31,10 @@ export const usePlaylistOptions = ({collection, playlistId, type} :PlaylistOptio
         { icon: Icons.Shuffle, label: "Reproducir aleatoriamente", action: () => selectRandomSong(playlistId, type) },
         { icon: Icons.Playlist, label: "Agregar a la fila", action: () => addPlaylistQueue(playlistId) },
         ...(!isLiked && !isAlbum
-            ? [{ icon: Icons.Trash, label: "Eliminar playlist", action: () => removePlaylist(playlistId) }]
+            ? [{ icon: Icons.Trash, label: "Eliminar playlist", action: () => {
+                router.replace("/library")
+                removePlaylist(playlistId)  
+              }}]
             : []),
         alreadyPinned
             ? { icon: Icons.Close, label: "Dejar de fijar en volver a escuchar", action: () => removePinned(playlistId) }

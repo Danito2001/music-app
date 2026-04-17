@@ -8,8 +8,9 @@ export function useClickOutside(
 	useEffect(() => {
 		if (!active) return;
 
-		const listener = (event) => {
-			if (!ref.current || ref.current.contains(event.target)) return;
+		const listener = (event: MouseEvent | TouchEvent) => {
+
+			if (!ref.current || ref.current.contains(event.target as Node)) return;
 			handler();
 		};
 

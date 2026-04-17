@@ -1,4 +1,4 @@
-import { Playlist } from "@/interfaces/song.interface";
+import type { Playlist } from "@/interfaces/song.interface";
 import Link from "next/link";
 
 export default function Playlist({ playlist, isActive }: { playlist: Playlist, isActive: boolean }) {
