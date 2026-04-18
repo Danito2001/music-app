@@ -94,8 +94,8 @@ export default function SongRowSuggestion({ song, currentSongId, options, view, 
 
                     </div>
 
-                    <div className="flex flex-col justify-center min-w-0">
-                        <h4 className="text-white font-semibold truncate text-xs">
+                    <div className="flex flex-col justify-center min-w-0 text-white">
+                        <h4 className="font-semibold truncate text-xs">
                             {song.title}
                         </h4>
 
@@ -196,7 +196,7 @@ export default function SongRowSuggestion({ song, currentSongId, options, view, 
                 {/* duration */}
                     {config.showDuration && (
                         <div className={`${view === "queue" && "group-hover:hidden"} text-end`}>
-                            <span className="text-sm opacity-85">
+                            <span className="text-sm opacity-85 text-white">
                                 {formatTime(song.duration)}
                             </span>
                         </div>

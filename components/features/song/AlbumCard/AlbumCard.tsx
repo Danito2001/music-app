@@ -30,7 +30,7 @@ export default function AlbumCard({
                 <div className="group-hover:bg-black/40 absolute inset-0"/>
             </Link>
 
-            <div className="flex flex-col flex-1 min-w-0 justify-center">
+            <div className="flex flex-col flex-1 min-w-0 justify-center text-white">
 
                 <span className="font-semibold text-xs md:text-sm block truncate">
                     {album.title}

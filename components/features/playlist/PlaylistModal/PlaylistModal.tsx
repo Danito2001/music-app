@@ -19,7 +19,7 @@ interface ModalProps {
     privacity?: Privacity;
 }
 
-export default function PlaylistModal({ playlistId, title = "", description = "", privacity = "public" }: ModalProps) {
+export default function PlaylistModal({ playlistId, title, description = "", privacity = "public" }: ModalProps) {
 
     const { closeModal } = useUIContext();
 
@@ -73,7 +73,7 @@ export default function PlaylistModal({ playlistId, title = "", description = ""
                         className="fixed inset-0 z-[999] flex items-center justify-center bg-black/50"
                     >
                         <div className="flex flex-col p-4 gap-y-4 rounded-md w-full max-w-md bg-neutral-800">
-                            <h3 className="text-xl font-semibold">{title ?? "Nueva Playlist"}</h3>
+                            <h3 className="text-xl font-semibold">{!title && "Nueva Playlist"}</h3>
                             <Input
                                 isRequired
                                 placeholder="Titulo"

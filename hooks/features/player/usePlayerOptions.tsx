@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { Icons } from "@/icons";
 import { selectCurrentPinned } from "@/store/songs/songs.selector";
 import { UiSong } from "@/interfaces/song.interface";
+import { useScreen } from "@/context/screen.context";
 
 interface OptionProps {
     currentSong: UiSong; 
@@ -15,9 +16,10 @@ export const usePlayerOptions = (
     currentSong: OptionProps["currentSong"], 
     queueSongs: OptionProps["queueSongs"]
 ) => {
-    const { addSong, addNextSong, removeSong, goToArtist, clearQueueAction, addPinned, removePinned } = usePlayerActions();
+    const { addSong, addNextSong, removeSong, goToArtist, clearQueueAction, addPinned, removePinned, likedSong } = usePlayerActions();
     const modalOpen = useUIContext().modalOpen;
     const path = usePathname();
+    const {isMobile } = useScreen();
 
     const alreadyPinned = useSelector(selectCurrentPinned);
 
@@ -28,6 +30,11 @@ export const usePlayerOptions = (
     const queueId = currentQueueItem?.queueId;
 
     return [
+        ...(isMobile ? [{ 
+            icon: currentSong.liked === "liked" ? Icons.Liked : Icons.Like,
+            label: "Agregar a Me Gusta", 
+            action: () => likedSong(currentSong.id) }] : []
+        ),
         { icon: Icons.Playlist, label: "Reproducir a continuación", action: () => addNextSong(currentSong.id) }, 
         { icon: Icons.Playlist, label: "Agregar a la fila", action: () => addSong(currentSong.id) }, 
         { 

@@ -31,7 +31,6 @@ export const useVolumeControls = () => {
         }
     };
 
-    const isMobile = window.matchMedia("(max-width: 768px)").matches;
 
     return {
         localVolume,
@@ -41,6 +40,5 @@ export const useVolumeControls = () => {
         setOpen,
         mobileOpen,
         setMobileOpen,
-        isMobile
     };
 };

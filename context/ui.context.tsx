@@ -47,6 +47,8 @@ export function UIProvider({ children }: { children: React.ReactNode }) {
 	const [ playerOpen, setPlayerOpen ] = useState(false);
 	const [ color, setColor ] = useState("");
 
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+
 	const value = useMemo(() => ({
 		sidebarOpen,
 		activeModal,
@@ -61,7 +63,8 @@ export function UIProvider({ children }: { children: React.ReactNode }) {
 		modalOpen: (modal: ModalType | null) => setActiveModal(modal),
 		closeModal: () => setActiveModal(null),
 		setColor: (value: string) => setColor(value),
-	}), [sidebarOpen, activeModal, playerOpen, searchOpen, color])
+		isMobile
+	}), [sidebarOpen, activeModal, playerOpen, searchOpen, color, isMobile])
 
 
 	return <UIContext.Provider value={value}>{children}</UIContext.Provider>

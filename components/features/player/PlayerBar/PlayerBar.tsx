@@ -92,9 +92,9 @@ export default function MusicPlayer() {
 
             {/* queue */}
             <div className={classNames(
-                "fixed z-min-w-0 flex-1 30 overflow-y-auto transition-height duration-300 bottom-0 bg-black inset-x-0 ",
+                "fixed z-min-w-0 flex-1 30 overflow-y-auto transition-height duration-300 bottom-0 bg-black inset-x-0",
                 playerOpen ? "h-[calc(100vh-60px)]" : "h-[70px]",
-                sidebarOpen ? "ml-[220px]" : "ml-0 sm:ml-[75px]"
+                sidebarOpen ? "lg:ml-[220px]" : "ml-0 sm:ml-[75px]"
             )}
             >
                 <div className="flex flex-col items-center justify-center mx-4 lg:mx-20 lg:gap-x-20 lg:flex-row">

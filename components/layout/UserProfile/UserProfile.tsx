@@ -14,7 +14,7 @@ export default function UserProfile() {
     
 
     return (
-        <div className="relative">
+        <div className="relative text-white">
             <div>
                 <Button
                     radius="none"

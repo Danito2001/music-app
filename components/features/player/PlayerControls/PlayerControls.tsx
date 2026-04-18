@@ -38,7 +38,7 @@ export default function PlayerControls({ queueSongs, currentSong, loading, error
     
     return (
         <>
-            <div className="flex items-center gap-x-2 mx-2">
+            <div className="flex items-center gap-x-2 mx-2 text-white">
                 <Button className="hover:bg-white/30" isIconOnly radius="full" onPress={() => playPrev(currentTime)}>
                     <MdOutlineSkipPrevious size={30} className="mx-auto" />
                 </Button>
@@ -57,9 +57,9 @@ export default function PlayerControls({ queueSongs, currentSong, loading, error
                 <Button className="hover:bg-white/30" isIconOnly radius="full" onPress={playNext}>
                     <MdOutlineSkipNext size={30} className="mx-auto" />
                 </Button>
-                <span className="text-xs text-white opacity-80 whitespace-nowrap hidden md:flex">{formatTime(currentTime)} / {formatTime(duration)}</span>
+                <span className="text-xs opacity-80 whitespace-nowrap hidden md:flex">{formatTime(currentTime)} / {formatTime(duration)}</span>
             </div>
-            <div className="flex items-center min-w-0">
+            <div className="flex items-center min-w-0 text-white">
                 <Image
                     className="rounded-md hidden sm:block"
                     height={45}
@@ -76,9 +76,12 @@ export default function PlayerControls({ queueSongs, currentSong, loading, error
                         >
                             {currentSong.artistName}
                         </Link>
-                        <Link 
-                            href={`/browse/${currentSong.albumTitle}`} 
+                        <Link
                             className="opacity-85 hidden truncate sm:block hover:underline"
+                            href={{
+                                pathname: "/playlist",
+                                query: { list: currentSong.albumId }
+                            }}
                         >
                             {currentSong.albumTitle}
                         </Link>

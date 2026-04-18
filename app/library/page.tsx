@@ -21,7 +21,7 @@ export default function Library() {
                 <div className="flex gap-x-4">
                     <Link
                         href={"/library"}
-                        className="border-b border-b-white font-semibold text-lg"
+                        className="border-b border-b-white font-semibold text-lg text-white"
                     >
                         Biblioteca
                     </Link>
@@ -38,7 +38,7 @@ export default function Library() {
                     >
                         <LikedCover/>
                     </Link>
-                    <div>
+                    <div className="text-white">
                         <span className="pt-4 font-semibold text-xs">
                             Música que te gustó
                         </span>

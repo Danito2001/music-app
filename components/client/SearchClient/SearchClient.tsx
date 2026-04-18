@@ -81,7 +81,7 @@ export default function SearchClient({ initialData, q }: { initialData: SearchRe
             ) : (
                 <>
                     {artists.length > 0 && (
-                        <div className="flex flex-col lg:flex-row"
+                        <div className="flex flex-col lg:flex-row text-white"
                             style={{
                                 background: `linear-gradient(to bottom, ${bgColor}, #000000)`
                             }}
@@ -110,7 +110,7 @@ export default function SearchClient({ initialData, q }: { initialData: SearchRe
                         </div>
                     )}
 
-                    <div className="flex flex-col gap-y-4">
+                    <div className="flex flex-col gap-y-4 text-white">
 
                         <h3 className="font-semibold text-xl">Más resultados</h3>
 

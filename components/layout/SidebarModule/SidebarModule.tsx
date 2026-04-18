@@ -17,7 +17,7 @@ export default function SidebarModule({ isOpen, href, label, icon }: SidebarProp
         <Link
             href={href}
             className={classNames(
-                "rounded-md gap-x-4 hover:bg-neutral-700 transition-background",
+                "rounded-md gap-x-4 hover:bg-neutral-700 transition-background text-white",
                 {
                     "flex justify-start p-2": isOpen,
                     "flex flex-col items-center py-3 -mx-2": !isOpen,

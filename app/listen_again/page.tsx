@@ -10,10 +10,10 @@ export default function ListenAgain() {
     const historySongs = useSelector(selectHistorySong)
 
     return (
-        <div>
+        <div className="text-neutral-400">
             {
                 historySongs.length === 0 ? (
-                    <div className="text-center text-neutral-400 py-10">
+                    <div className="text-center py-10">
                         <p>No has reproducido ninguna canción todavía.</p>
                         <p className="text-sm">Empieza a escuchar música para ver tu historial aquí.</p>
                     </div>

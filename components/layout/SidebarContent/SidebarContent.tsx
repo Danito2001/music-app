@@ -35,7 +35,7 @@ export default function SidebarContent() {
                     : scrolled ? "bg-primary border-r border-r-white/10" : "bg-transparent border-none",
             )}
         >
-            <div className="flex flex-col gap-y-6 pt-[60px] h-full">
+            <div className="flex flex-col gap-y-6 pt-[60px] h-full text-white">
                 <div className="flex flex-col">
                     <SidebarModule isOpen={sidebarOpen} icon={<Icons.Home size={20} />} label={"Principal"} href={"/"} />
                     <SidebarModule isOpen={sidebarOpen} icon={<Icons.Library size={20} />} label={"Biblioteca"} href={"/library"} />
@@ -47,11 +47,7 @@ export default function SidebarContent() {
                                 <Button
                                     startContent={<FaPlus size={20} />}
                                     className="flex justify-center p-2 hover:bg-white/20 transition-background rounded-full gap-x-4 bg-white/10 w-full"
-                                    onPress={() => modalOpen({
-                                        type: "playlistForm", props: {
-                                            title: "Nueva Playlist"
-                                        }
-                                    })}
+                                    onPress={() => modalOpen({ type: "playlistForm" })}
                                 >
                                     <span className="text-xs font-semibold">Nueva Playlist</span>
                                 </Button>

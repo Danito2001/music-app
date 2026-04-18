@@ -39,7 +39,7 @@ export default function SongLargeView({ song, options, currentSongId, mode, opti
     const isOpen = floating.optionsOpen === optionKey.optionKey
 
     return (
-        <div className="flex flex-col shrink-0 w-[160px]">
+        <div className="flex flex-col shrink-0 w-[160px] text-white">
             <div className="group relative flex items-center justify-center w-fit">
                 <Image
                     src={song.cover}

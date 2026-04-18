@@ -77,7 +77,7 @@ export default function Navbar() {
                 ? "bg-primary border-b border-b-white/10"
                 : scrolled ? "bg-primary border-b border-b-white/10" : "bg-transparent border-none",
         )}>
-            <div className={`flex items-center justify-between w-full`}>
+            <div className={`flex items-center justify-between w-full text-white`}>
 
                 {/* button bar and YT icon */}
                 <div className="relative flex items-center gap-x-16 w-full">
@@ -105,7 +105,9 @@ export default function Navbar() {
                         <div className="relative">
                             <Input
                                 placeholder="Buscar canciones o artistas"
-                                classNames={{ input: "p-2 rounded-lg focus:bg-black/90 bg-black border border-white/10", }}
+                                classNames={{ 
+                                    input: "p-2 rounded-lg focus:bg-black/90 bg-white/10 border border-white/10 text-sm text-white placeholder:text-white/80",
+                                }}
                                 onFocus={() => setIsActive(true)}
                                 onBlur={handleBlur}
                                 value={search}

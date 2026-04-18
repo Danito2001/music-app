@@ -43,7 +43,7 @@ export default function ArtistCard({ artist, variant = "default", tracks }: Arti
                 />
                 <div className="group-hover:bg-black/40 absolute inset-0"/>
             </Link>
-            <div className={`flex flex-col gap-y-1 ${isLarge ? "items-center" : "items-start"} justify-center`}>
+            <div className={`flex flex-col gap-y-1 ${isLarge ? "items-center" : "items-start"} justify-center text-white`}>
                 <span className={`font-semibold ${isFirst ? "text-xl" : "text-sm"}`}>{artist.name}</span>
                 <div className="opacity-80 text-sm">
                     {variant !== "large" && <span>Artista • </span>}

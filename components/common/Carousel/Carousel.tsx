@@ -52,7 +52,7 @@ export default function Carousel({ title, children, history }: {title?: string, 
 
     return (
         <div className="relative flex flex-col h-[350px]">
-            <div className="flex items-center justify-between gap-x-4">
+            <div className="flex items-center justify-between gap-x-4 text-white">
                 {!history ? (
                     <h3 className="pb-2 font-semibold text-lg md:text-xl">{title}</h3>
                 ) : (

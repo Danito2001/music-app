@@ -45,7 +45,7 @@ export default function ChannelClient({ data }: { data: ArtistResponse }) {
 
                 <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent" />
 
-                <div className={`relative h-full flex flex-col justify-end px-2 ml-0 sm:px-12 ${sidebarOpen ? "ml-0" : "sm:ml-[90px]"}`}>
+                <div className={`relative h-full flex flex-col justify-end px-2 ml-0 sm:px-12 ${sidebarOpen ? "ml-0" : "sm:ml-[90px]"} text-white`}>
 
                     <div className="flex flex-col gap-y-2 max-w-2xl">
                         <h2 className="text-3xl font-semibold">{artist.name}</h2>
@@ -88,7 +88,7 @@ export default function ChannelClient({ data }: { data: ArtistResponse }) {
 
                 </div>
             </div>
-            <div className="flex flex-col gap-y-10 mt-[90vh] w-full">
+            <div className="flex flex-col gap-y-10 mt-[90vh] w-full text-white">
                 <div>
                     <h3 className="pb-2 font-semibold text-xl">Canciones más populares</h3>
                     {tracks.map(track => {

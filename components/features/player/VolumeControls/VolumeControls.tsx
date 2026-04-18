@@ -1,3 +1,4 @@
+import { useScreen } from "@/context/screen.context";
 import { useUIContext } from "@/context/ui.context";
 import { usePlayer } from "@/hooks/features/player/usePlayer";
 import usePlayerActions from "@/hooks/features/player/usePlayerActions";
@@ -18,19 +19,18 @@ export default function VolumeControls() {
         setOpen, 
         mobileOpen,
         setMobileOpen,
-        isMobile,
     } = useVolumeControls();
 
     const { setLoop, repeat, setShuffle } = usePlayerActions();
     const { togglePlayer, playerOpen } = useUIContext();
+    const isMobile = useScreen();
 
     return (
         <div
             className="flex items-center gap-x-2"
             onMouseLeave={() => setOpen(false)}
         >
-            <div className={`
-                absolute right-16 flex items-center gap-x-1 bg-neutral-800 h-full px-2 rounded-lg transition-all duration-300
+            <div className={`absolute right-16 flex items-center gap-x-1 bg-neutral-800 h-full px-2 rounded-lg transition-all duration-300 text-white
                 lg:static lg:bg-transparent lg:opacity-100 lg:pointer-events-auto
                 ${open || mobileOpen
                     ? "opacity-100 translate-x-0 pointer-events-auto" 
@@ -89,7 +89,7 @@ export default function VolumeControls() {
                 </Button>
             </div>
 
-            <div className="flex items-center lg:hidden">
+            <div className="flex items-center text-white lg:hidden">
                 <Button
                     isIconOnly
                     variant="light"

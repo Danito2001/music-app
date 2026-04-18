@@ -23,7 +23,7 @@ export default function RelatedSongs({ queueSongs }: { queueSongs: QueueSong[] }
     const currentQueueSongs = useSelector(selectQueueSongs).map(songs => songs.song.id)
 
     return (
-        <section className="flex flex-col gap-y-4 pt-6">
+        <section className="flex flex-col gap-y-4 pt-6 text-white">
             <span className="border-b border-b-white text-xs mx-auto font-bold w-fit">
                 A CONTINUACÍON
             </span>
@@ -67,7 +67,7 @@ export default function RelatedSongs({ queueSongs }: { queueSongs: QueueSong[] }
                     <Loading type="data" />
                 ) : (
                     <>
-                        <h4 className="font-semibold opacity-70 mt-4">Sugerencias</h4>
+                        <h4 className="font-semibold opacity-70 mt-4 text-white">Sugerencias</h4>
                         {suggestionSongs.map(track => {
                             const option = getOptionKey("song-suggestion", track.id)
 

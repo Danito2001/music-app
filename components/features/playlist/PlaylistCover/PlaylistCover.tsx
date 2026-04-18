@@ -39,7 +39,7 @@ export default function PlaylistCover({ collection, playlistId, album, type }: C
     const gridImages = getGridImages(collection.cover)
 
     return (
-        <div className="flex flex-col items-center gap-y-2 text-center w-full lg:w-1/3">
+        <div className="flex flex-col items-center gap-y-2 text-center w-full lg:w-1/3 text-white">
 
             <div className="relative">
                 {playlistId === "LM" 

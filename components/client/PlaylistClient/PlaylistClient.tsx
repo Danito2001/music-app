@@ -122,7 +122,7 @@ export default function PlaylistClient() {
 
     if (!collection) {
         return (
-            <div className="flex gap-x-2">
+            <div className="flex gap-x-2 text-white">
                 <span>No se encontró playlist: </span>
                 <button
                     onClick={() => router.replace("/")}
@@ -171,7 +171,7 @@ export default function PlaylistClient() {
 
                         {collection.type === "playlist" && (
                             <div>
-                                <h3 className="text-2xl font-semibold">Sugerencias</h3>
+                                <h3 className="text-2xl font-semibold text-white">Sugerencias</h3>
                                 {suggestionSongs.map((track) => {
                                     const option = getOptionKey("song", track.id)
 
