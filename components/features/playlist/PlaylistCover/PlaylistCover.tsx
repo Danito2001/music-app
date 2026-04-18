@@ -38,8 +38,6 @@ export default function PlaylistCover({ collection, playlistId, album, type }: C
     const isPlaylist = collection.type === "playlist";
     const gridImages = getGridImages(collection.cover)
 
-    console.log({option: floating.optionsOpen})
-
     return (
         <div className="flex flex-col items-center gap-y-2 text-center w-full lg:w-1/3">
 

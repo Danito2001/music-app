@@ -41,8 +41,6 @@ export default function SearchClient({ initialData, q }: { initialData: SearchRe
 
     const firstArtist = artists[0]
 
-    console.log({tracks})
-
     useEffect(() => {
         setBgColor(`hsl(${Math.random() * 360}, 80%, 10%)`);
     }, []);
