@@ -1,7 +1,7 @@
 import { AppDispatch, RootState } from "@/store/store";
-import { addPlaylistToQueue, clearQueue, setCurrentSong } from "@/store/player/playerSlice";
-import { setSuggestionSongsFromPlaylist } from "@/store/songs/songs.thunk";
-import { getSongIdsBySource } from "@/store/songs/songs.selector";
+import { addPlaylistToQueue, clearQueue, setCurrentSong } from "@/store/player/player.slice";
+import { loadSuggestionsForSource } from "@/store/songs/songs.thunk";
+import { getSongIdsBySource, songSelectors } from "@/store/songs/songs.selector";
 import { SourceType } from "@/interfaces/collection.interface";
 
 
@@ -14,9 +14,15 @@ export const startPlaylistPlayback = (
 ) => {
 
     const songIds = getSongIdsBySource[type](state, playlistId)
+    const currentSong = songSelectors.selectById(state, songId)
 
     dispatch(clearQueue());
     dispatch(setCurrentSong(songId));
     dispatch(addPlaylistToQueue(songIds));
-    dispatch(setSuggestionSongsFromPlaylist(playlistId))
+    
+    if ( type === "playlist" ) {
+        dispatch(loadSuggestionsForSource(currentSong.artistId, {
+            source: "queue",
+        }))
+    } 
 }

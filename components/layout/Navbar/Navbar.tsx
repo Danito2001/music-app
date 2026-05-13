@@ -46,9 +46,11 @@ export default function Navbar() {
         setSearch(e.target.value)
     }
 
-
     const handleSelect = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter" && search.trim() !== "") {
+
+            e.currentTarget.blur()
+
             setRecentSearch(prev => {
                 const filtered = prev.filter(item => item.value !== search)
                 const newSearch: SearchProps = {
@@ -58,6 +60,7 @@ export default function Navbar() {
                 return [newSearch, ...filtered].slice(0, 6)
             })
             setSearch("")
+            setIsActive(false)
             router.push(`/search?q=${encodeURIComponent(search)}&limit=10`);
         }
     }
@@ -72,7 +75,7 @@ export default function Navbar() {
     };
 
     return (
-        <nav className={classNames("sticky top-0 flex z-40 px-6 py-2 mb-8 w-full h-[60px]",
+        <nav className={classNames("sticky top-0 flex z-40 px-6 py-2 mb-8 w-full h-15",
             playerOpen
                 ? "bg-primary border-b border-b-white/10"
                 : scrolled ? "bg-primary border-b border-b-white/10" : "bg-transparent border-none",
@@ -101,7 +104,7 @@ export default function Navbar() {
                     </div>
 
                     {/* responsive inputs */}
-                    <div className="hidden md:block w-full max-w-[400px]">
+                    <div className="hidden md:block w-full max-w-100">
                         <div className="relative">
                             <Input
                                 placeholder="Buscar canciones o artistas"

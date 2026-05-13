@@ -1,8 +1,6 @@
-import { addSongToPlaylist } from "../playlist/playlistSlice";
+import { addSongToPlaylist, setPlaylistSuggestion } from "../playlist/playlist.slice";
 import {
 	removeFromGlobalSuggestions,
-	setGlobalSuggestions,
-	setPlaylistSuggestions,
 	toggleLike,
 	addSongToLiked,
 	removeSongFromLiked,
@@ -11,7 +9,8 @@ import {
 	saveSearchCache,
 	setCurrentQuery,
 	setLoading,
-} from "../songs/songsSlice";
+	setGlobalSuggestions
+} from "./songs.slice";
 import { AppDispatch, RootState } from "../store";
 import { songSelectors } from "./songs.selector";
 import { toast } from "@/helpers/toast";
@@ -19,6 +18,7 @@ import { shuffle } from "@/helpers/shuffle";
 import { getRelatedService, getTracksService, previewSearchService } from "@/services/deezer";
 import { upsertOneArtist } from "../artist/artist.slice";
 import { selectPlaylistSongs } from "../playlist/playlist.selector";
+import { setSuggestionsQueue } from "../player/player.slice";
 
 
 export const addSuggestionToPlaylist =
@@ -27,28 +27,70 @@ export const addSuggestionToPlaylist =
 		dispatch(removeFromGlobalSuggestions(songId));
 };
 
-export const setSuggestionSongsFromPlaylist =
-	(playlistId?: string) => (dispatch: AppDispatch, getState: () => RootState) => {
+export const setGlobalSuggestionsFallBack =
+	() => (dispatch: AppDispatch, getState: () => RootState) => {
 
-		if (!playlistId) return;
-		
 		const state = getState();
-		const playlist = state.playlist.playlists.find((p) => p.id === playlistId);
 		
-		if (!playlist) return;
-
 		const allSongs = songSelectors.selectAll(state);
 
-		const playlistSongs = selectPlaylistSongs(playlistId)
-		
-		if (playlistSongs.length === 0) {
+		const shuffledIds = shuffle(allSongs.map(song => song.id))
+		const suggestions = shuffledIds.slice(0,10);
 
-			const shuffledIds = shuffle(allSongs.map(song => song.id))
-			const suggestions = shuffledIds.slice(0,10);
-			
-			dispatch(setGlobalSuggestions(suggestions))
+		dispatch(setGlobalSuggestions(suggestions))
+	};
+
+export const setPlaylistSuggestionsFromPlaylist =
+	(playlistId: string) =>
+	async (dispatch: AppDispatch, getState: () => RootState) => {
+
+		const state = getState();
+		const playlistSongs = selectPlaylistSongs(state, playlistId);
+
+		if (playlistSongs.length === 0) {
+			dispatch(setPlaylistSuggestion({
+				playlistId,
+				ids: []
+			}))
 			return;
-		} 
+		}
+
+		const artistIds = [...new Set(playlistSongs.map(s => s.artistId))];
+
+		const selectedArtists = shuffle(artistIds).slice(0, 3);
+
+		const results = await Promise.allSettled(
+			selectedArtists.map(artistId =>
+				dispatch(fetchSuggestions(artistId))
+			)
+		);
+
+		const tracks = results
+			.filter(r => r.status === "fulfilled")
+			.flatMap(r => r.value ?? []);
+
+		const songIds = tracks.map(track => track.id)
+
+		const shuffled = shuffle(songIds).slice(0, 10);
+
+		dispatch(upsertManyToCatalog(tracks));
+
+		dispatch(setPlaylistSuggestion({
+			playlistId,
+			ids: shuffled
+		}))
+  };
+
+export const loadSuggestions =
+	(playlistId: string) => (dispatch: AppDispatch, getState: () => RootState) => {
+		const state = getState();
+		const playlistSongs = selectPlaylistSongs(state, playlistId);
+
+		if (playlistSongs.length === 0) {
+			dispatch(setGlobalSuggestionsFallBack());
+		} else {
+			dispatch(setPlaylistSuggestionsFromPlaylist(playlistId));
+		}
 	};
 
 export const likedSongThunk = (songId: string) => (dispatch: AppDispatch, getState: () => RootState) => {
@@ -137,12 +179,38 @@ export const fetchSuggestions = (artistId: string) => async(dispatch: AppDispatc
 		const shuffled = flattedTracks.sort(() => Math.random() - 0.5)
 
 		dispatch(upsertManyToCatalog(shuffled))
-		dispatch(setPlaylistSuggestions(shuffled.map(song => song.id)))
+
+		return shuffled
 		
 	} catch (error) {
 		console.log({error: error})
+		return [];
 	} finally {
 		dispatch(setLoading(false));
 	}
 
 }
+
+export const loadSuggestionsForSource = 
+	(artistId: string, options: {source: "queue" | "playlist" | "global", playlistId?: string}) => 
+	async (dispatch: AppDispatch) => {
+
+		const tracks = await dispatch(fetchSuggestions(artistId));
+
+		const ids = tracks.map(t => t.id);
+
+		if (options.source === "queue") {
+			dispatch(setSuggestionsQueue(ids))
+		}
+
+		if (options.source === "playlist" && options.playlistId) {
+			dispatch(setPlaylistSuggestion({
+				playlistId: options.playlistId, 
+				ids
+			}))
+		}
+
+		if (options.source === "global") {
+			dispatch(setGlobalSuggestions(ids));
+		}
+  	};

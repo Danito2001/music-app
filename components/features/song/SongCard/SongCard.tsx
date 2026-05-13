@@ -5,15 +5,17 @@ import { SongLargeView } from "../SongLargeView";
 import { useSongOptions } from "@/hooks/features/song/useSongOptions";
 import { OptionKeyResult, PlayType, ViewCard } from "@/interfaces/common.interface";
 import { UiSong } from "@/interfaces/song.interface";
+import { CollectionType } from "@/hooks/features/playlist/useCollectionType";
 
 type CardProps = {
     song: UiSong;
     view: ViewCard;
-    mode: PlayType;
-    queueId?: string;
-    playlistId?: string;
-    isPinned?: boolean;
     optionKey: OptionKeyResult;
+    playlistId: string | null;
+    mode?: PlayType;
+    source?: CollectionType;
+    queueId?: string;
+    isPinned?: boolean;
 }
 
 export default function SongCard({
@@ -21,6 +23,7 @@ export default function SongCard({
     view,
     playlistId,
     queueId,
+    source,
     mode,
     isPinned,
     optionKey
@@ -28,33 +31,36 @@ export default function SongCard({
 
     const { currentSongId, options } = useSongOptions({
         song,
-        mode,
+        source,
         playlistId,
         queueId
     });
 
-    return (
-        <>
-            {view !== "large" ? (
-                <SongRowSuggestion
-                    song={song}
-                    options={options}           
-                    playlistId={playlistId}
-                    currentSongId={currentSongId}
-                    view={view}
-                    mode={mode}
-                    optionKey={optionKey}
-                />
-            ) : (
-                <SongLargeView
-                    song={song}
-                    options={options}
-                    currentSongId={currentSongId}
-                    isPinned={isPinned}
-                    mode={mode}
-                    optionKey={optionKey}
-                />
-            )}
-        </>
-    )
+    if (view !== "large") {
+        return (
+            <SongRowSuggestion
+                song={song}
+                options={options}
+                playlistId={playlistId}
+                currentSongId={currentSongId}
+                view={view}
+                source={source}
+                mode={mode}
+                optionKey={optionKey}
+            />
+        );
+    }
+
+    if (mode) {
+        return (
+            <SongLargeView
+                song={song}
+                options={options}
+                currentSongId={currentSongId}
+                isPinned={isPinned}
+                mode={mode}
+                optionKey={optionKey}
+            />
+        );
+    }
 }

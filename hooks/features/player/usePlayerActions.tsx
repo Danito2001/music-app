@@ -5,13 +5,21 @@ import { SourceType } from "@/interfaces/collection.interface";
 import { PlayType } from "@/interfaces/common.interface";
 import { UiSong } from "@/interfaces/song.interface";
 import { addPlaylistToQueueEnd, addSongToPlayNext, playFirstSongFromPlaylist, playNextSong, playPrevSong, playRandomSongFromPlaylist, playRandomTrack, playSongSmart, playStandaloneSong, playSuggestionSong, removeSongFromQueueThunk, shuffledQueue } from "@/store/player/player.thunk";
-import { clearQueue, setCurrentSong, setRepeatMode, stop } from "@/store/player/playerSlice";
+import { clearQueue, setCurrentSong, setRepeatMode, stop } from "@/store/player/player.slice";
 import { addSuggestionToPlaylist, dislikedSongThunk, likedSongThunk } from "@/store/songs/songs.thunk";
-import { addSongToPinned, removeSongFromPinned } from "@/store/songs/songsSlice";
+import { addSongToPinned, removeSongFromPinned } from "@/store/songs/songs.slice";
 import { AppDispatch } from "@/store/store";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux"
 import { usePlayer } from "./usePlayer";
+import { CollectionType } from "../playlist/useCollectionType";
+
+type PlaySongArgs = {
+    songId: string;
+    playlistId: string | null;
+    mode?: PlayType;
+    source?: CollectionType;
+};
 
 
 export default function usePlayerActions() {
@@ -28,6 +36,7 @@ export default function usePlayerActions() {
         setTimeout(() => {
             dispatch(setCurrentSong(null))
             dispatch(clearQueue())
+            // dispatch(clearPlaylistSuggestions())
             dispatch(stop())
         }, 400);
     }
@@ -64,8 +73,10 @@ export default function usePlayerActions() {
 
     const removeSong = (queueId: string, songId: string) => dispatch(removeSongFromQueueThunk(queueId, songId));
 
-    const playSong = (songId: string, type:PlayType, playlistId?: string) => dispatch(playSongSmart(songId, type, playlistId));
-
+    const playSong = ({ songId, mode, source, playlistId }: PlaySongArgs) => {
+        dispatch(playSongSmart(songId, playlistId, mode, source));
+    }
+    
     const playRandom = (tracks: UiSong[]) => dispatch(playRandomTrack(tracks))
 
     const playSingleSong = (songId: string) => dispatch(playStandaloneSong(songId))

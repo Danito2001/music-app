@@ -1,17 +1,18 @@
 import { AppDispatch, RootState } from "../store";
-import { addSongToHistory, removeFromPlaylistSuggestions } from "../songs/songsSlice";
+import { addSongToHistory } from "../songs/songs.slice";
 
 import { startPlaylistPlayback } from "@/helpers/startPlaylistPlayback";
 import { getSongIdsBySource, songSelectors } from "../songs/songs.selector";
-import { addPlaylistToQueue, addSongToQueue, clearQueue, insertSongToQueue, play, removeSongFromQueue, setCurrentSong, setSeekTo, shuffleQueue } from "./playerSlice";
+import { addPlaylistToQueue, addSongToQueue, clearQueue, insertSongToQueue, play, removeSongFromQueue, setChangeSource, setCurrentSong, setPlaybackSource, setSeekTo, shuffleQueue } from "./player.slice";
 import { selectAlbumSongIdsById } from "../album/album.selector";
-import { fetchSuggestions } from "../songs/songs.thunk";
+import { loadSuggestionsForSource } from "../songs/songs.thunk";
 import { getPlaylistSongIds } from "@/helpers/getPlaylistSongIds";
-import { selectQueueSongs } from "./player.selector";
 import { shuffle } from "@/helpers/shuffle";
 import { SourceType } from "@/interfaces/collection.interface";
 import { PlayType } from "@/interfaces/common.interface";
 import { UiSong } from "@/interfaces/song.interface";
+import { CollectionType } from "@/hooks/features/playlist/useCollectionType";
+import { selectSongsByArtistId } from "../artist/artist.selector";
 
 
 export const playRandomSongFromSource = (songId: string, playlistId: string, type: SourceType) =>
@@ -19,6 +20,14 @@ export const playRandomSongFromSource = (songId: string, playlistId: string, typ
 		const state = getState();
 
 		startPlaylistPlayback(dispatch, songId, playlistId, state, type)
+
+		const currentSong = songSelectors.selectById(state, songId)
+
+		if ( type === "playlist" ) {
+			dispatch(loadSuggestionsForSource(currentSong.artistId, {
+        		source: "queue",
+      		}))
+		} 
 	};
 
 export const playRandomSongFromPlaylist = (playlistId: string, type: SourceType) =>
@@ -49,51 +58,72 @@ export const playFirstSongFromPlaylist = (playlistId: string, type: SourceType) 
 		startPlaylistPlayback(dispatch, firstSongId, playlistId, state, type)
 } 
 
-export const playSongSmart = (songId: string, type:PlayType, playlistId?: string) => 
+export const playSongSmart = (songId: string, id: string | null, mode?: PlayType, source?: CollectionType) => 
 	(dispatch: AppDispatch, getState: () => RootState) => {
 
 		dispatch(addSongToHistory(songId))
 		const state = getState();
 
-		const actions: Record<PlayType, () => void> = {
+		let shouldPlay = false
 
-			queue: () => dispatch(setCurrentSong(songId)),
+		if (mode) {
+			switch (mode) {
+				case "queue":
+					dispatch(setCurrentSong(songId));
+					shouldPlay = true;
+					break;
+				case "suggestion-queue":
+					dispatch(playSuggestionSong(songId));
+					shouldPlay = true;
+					break;
+				case "suggestion-standalone":
+					dispatch(playStandaloneSong(songId));
+					shouldPlay = true;
+					break;
+			}
 
-			album: () => {
-				if (!playlistId) return console.log(playlistId);
-				const songIds = selectAlbumSongIdsById(state, playlistId)
-				
-				dispatch(playAlbum(songId, songIds));
-			},
+		} else {
 
-			liked: () => {	
-				dispatch(playLiked(songId))
-			},
+			switch (source) {
+				case "album": {
+					if (!id) return;
+					const songIds = selectAlbumSongIdsById(state, id);
+					dispatch(playAlbum(songId, songIds, id));
+					shouldPlay = true;
+					break;
+				}
 
-			playlist: () => {
-				if (!playlistId) return;
-				dispatch(playRandomSongFromSource(songId, playlistId, "playlist"))
-			},
+				case "playlist": {
+					if (!id) return;
+					dispatch(playRandomSongFromSource(songId, id, "playlist"));
+					shouldPlay = true;
+					break;
+				}
 
-			"suggestion-standalone": () => {
-        		dispatch(playStandaloneSong(songId));
-      		},
-
-			"suggestion-queue": () => {
-				dispatch(playSuggestionSong(songId));
-			},
+				case "liked": {
+					dispatch(playLiked(songId));
+					shouldPlay = true;
+					break;
+				}
+	
+				case "artist": {
+					if (!id) return;
+					dispatch(playArtistSongs(songId, id))
+					shouldPlay = true;
+					break
+				}
+	
+				default:
+					break;
+			}
 		}
-
-		const action = actions[type]
-
-		if (!action) {
-			console.warn("PlayType inválido:", type)
-			return
-		}
-
-		action()
-		dispatch(play())
+		
+		if (shouldPlay) {
+			dispatch(play());
+		}	
 	}
+
+	
 
 export const playStandaloneSong =
 	(songId: string) => (dispatch: AppDispatch, getState: () => RootState) => {
@@ -105,16 +135,15 @@ export const playStandaloneSong =
 		dispatch(clearQueue());
 		dispatch(setCurrentSong(songId));
 		dispatch(addSongToQueue(songId));
-		dispatch(fetchSuggestions(currentSong.artistId));
+		dispatch(loadSuggestionsForSource(currentSong.artistId, {source: "queue"}))
 	};
 
 export const playSuggestionSong = 
 	(songId: string) => (dispatch: AppDispatch) => {
-    	dispatch(removeFromPlaylistSuggestions(songId));
+		dispatch(setChangeSource(songId));
 		dispatch(setCurrentSong(songId));
-		dispatch(addSongToQueue(songId));
+		// dispatch(addSongToQueue(songId));
 	};
-
 
 
 export const playLiked = 
@@ -130,33 +159,52 @@ export const playLiked =
 		dispatch(clearQueue())
 		dispatch(setCurrentSong(songId))
 		dispatch(addPlaylistToQueue(likedIds))
-		dispatch(fetchSuggestions(currentSong.artistId));
+		dispatch(loadSuggestionsForSource(currentSong.artistId, {
+        	source: "queue",
+      	}))
 }
+
+export const playArtistSongs = 
+	(songId: string, artistId: string) => (dispatch: AppDispatch, getState: () => RootState) => {
+
+		const state = getState();
+		const songsIds = selectSongsByArtistId(state, artistId).map(song => song.id)
+
+		dispatch(clearQueue())
+		dispatch(setCurrentSong(songId))
+		dispatch(addPlaylistToQueue(songsIds))
+	}
 
 
 export const playNextSong =
 	() => (dispatch: AppDispatch, getState: () => RootState) => {
+
 		const state = getState();
 
-		const queue = state.player.queue.map((q) => q.songId);
-		const { currentSongId, repeat } = state.player;
+		const queue = state.player.queue;
+		const currentSongId = state.player.currentSongId;
 
-		const index = queue.findIndex((id) => id === currentSongId);
+		const index = queue.findIndex(
+			(q) => q.songId === currentSongId
+		);
+
 		if (index === -1) return;
 
-		let nextIndex = index + 1;
+		const next = queue[index + 1];
 
-		if (nextIndex >= queue.length) {
-			const nextSuggestion = state.songs.playlistSuggestions.ids[0]
-			dispatch(playSuggestionSong(nextSuggestion))
-		}
+		if (next) {
 
-		if (nextIndex >= queue.length) {
-			if (!repeat) return;
-			nextIndex = 0;
-		}
+			if (next.source === "suggestion") {
+				dispatch(setChangeSource(next.songId));
+			}
 
-		dispatch(setCurrentSong(queue[nextIndex]));
+			dispatch(setCurrentSong(next.songId));
+			return;
+		}	
+
+		console.log({queueFromThunk: queue})
+
+		dispatch(setCurrentSong(queue[0].songId));
 	};
 
 export const playPrevSong = (currentTime: number) => (dispatch: AppDispatch, getState: () => RootState) => {
@@ -240,17 +288,27 @@ export const addPlaylistToQueueEnd =
 export const shuffledQueue = () => (dispatch: AppDispatch, getState: () => RootState) => {
 
     const state = getState();
-    const songIds = selectQueueSongs(state)
+	const queue = state.player.queue;
 
-    if (songIds.length === 0) return;
+	const manual = queue.filter(q => q.source === "manual");
+	const suggestions = queue.filter(q => q.source === "suggestion");
+	
+    if (manual.length === 0) return;
 
-    const shuffled = shuffle(songIds.map(q => q.song.id))
+    const shuffled = [
+		...shuffle(manual),
+		...suggestions
+	]
 
     dispatch(shuffleQueue(shuffled))
 }
 
-export const playAlbum = (songId: string, songIds: string[]) => (dispatch: AppDispatch) => {
+export const playAlbum = (songId: string, songIds: string[], id: string) => (dispatch: AppDispatch) => {
     dispatch(clearQueue())
     dispatch(setCurrentSong(songId))
     dispatch(addPlaylistToQueue(songIds))
+	dispatch(setPlaybackSource({
+		type: "album",
+		id
+	}))
 }

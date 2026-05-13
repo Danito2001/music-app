@@ -13,7 +13,7 @@ export const getRelatedService = async(artistId: string) => {
 
 export const getTracksService = async(artistId: string, limit: number) => {
 
-    const response = await axiosServer.get<UiSong>("/tracks", {
+    const response = await axiosServer.get<UiSong[]>("/tracks", {
         params: {
             id: artistId,
             limit: limit

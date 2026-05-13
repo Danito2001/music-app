@@ -42,7 +42,7 @@ export default function ConfigModal({ onClose }: ConfigProps) {
                 <div className="flex flex-col w-full max-w-md md:max-w-xl h-[80vh] border border-neutral-700 bg-neutral-800 rounded-md">
 
                     <div className="flex items-center justify-between p-4">
-                        <h3 className="text-xl font-semibold">Configuración</h3>
+                        <h3 className="text-xl font-semibold text-white">Configuración</h3>
                         <Button 
                             size="lg" 
                             onPress={onClose} 

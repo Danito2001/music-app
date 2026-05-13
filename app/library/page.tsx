@@ -9,7 +9,6 @@ import { RootState } from "@/store/store";
 import Link from "next/link";
 import { useSelector } from "react-redux";
 
-
 export default function Library() {
 
     const { playlists } = useSelector((state: RootState) => state.playlist)
@@ -33,7 +32,10 @@ export default function Library() {
                     <Link
                         href={{
                             pathname: "playlist",
-                            query: { list: "LM" }
+                            query: { 
+                                list: "LM",
+                                type: "liked"
+                            }
                         }}
                     >
                         <LikedCover/>
@@ -50,24 +52,15 @@ export default function Library() {
                 </div>
                 {playlists.map((playlist) => {
                     return (
-                        <Link 
-                            key={playlist.id} 
-                            className="w-fit"
-                            href={{
-                                pathname: "/playlist",
-                                query: { list: playlist.id }
+                        <AlbumCard
+                            key={playlist.id}
+                            album={{
+                                ...playlist,
+                                cover: getPlaylistCover(playlist, entities)
                             }}
-                        >
-                            <AlbumCard
-                                key={playlist.id}
-                                album={{
-                                    ...playlist,
-                                    cover: getPlaylistCover(playlist, entities)
-                                }}
-                                size="lg"
-                                viewType="playlist"
-                            />
-                        </Link>
+                            size="lg"
+                            viewType="playlist"
+                        />
                     )
                 })}
             </div>

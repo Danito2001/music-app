@@ -1,9 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
-import playlistSlice from "./playlist/playlistSlice";
-import songsSlice from "./songs/songsSlice";
-import playerSlice from "./player/playerSlice";
+import playlistSlice from "./playlist/playlist.slice";
+import songsSlice from "./songs/songs.slice";
+import playerSlice from "./player/player.slice";
 import toastSlice from "./toast/toast.slice";
-import albumSlice from "./album/albumSlice";
+import albumSlice from "./album/album.slice";
 import artistSlice from "./artist/artist.slice";
 
 

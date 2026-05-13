@@ -26,7 +26,7 @@ export const mapAlbumToCollection = (album:UiAlbum): AlbumCollection => ({
     year: album.year,
     songIds: album.songIds,
     duration: album.duration,
-    type: "album",
+    type: "album"
 })
 
 export const mapLikedToCollection = (likedIds: string[]): LikedCollection => ({

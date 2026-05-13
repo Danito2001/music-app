@@ -4,7 +4,6 @@ import { Privacity } from "./common.interface";
 export type SourceType = "playlist" | "album" | "liked";
 export type GetSongIdsFn = (state: RootState, id: string) => string[]
 
-
 export interface BaseCollection {
     id: string;
     title: string;
@@ -15,10 +14,10 @@ export interface BaseCollection {
 }
 
 export interface PlaylistCollection extends BaseCollection {
-    type: "playlist";
     songIds: string[];
     description?: string;
     privacity: Privacity;
+    type: "playlist";
 }
 
 export interface AlbumCollection extends BaseCollection {
@@ -32,4 +31,4 @@ export interface LikedCollection extends BaseCollection {
 export type CollectionView =
     | PlaylistCollection
     | AlbumCollection
-    | LikedCollection;
+    | LikedCollection

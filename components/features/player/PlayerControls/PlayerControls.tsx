@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { MdOutlineSkipNext, MdOutlineSkipPrevious } from "react-icons/md";
 import { PlaybackOptions } from "../PlaybackOptions";
-import { pause, play } from "@/store/player/playerSlice";
+import { pause, play } from "@/store/player/player.slice";
 import { formatTime } from "@/helpers/formatTime";
 import { usePlayer } from "@/hooks/features/player/usePlayer";
 import usePlayerActions from "@/hooks/features/player/usePlayerActions";
@@ -14,10 +14,11 @@ import { useFloatingPosition } from "@/hooks/common/useFloatingPosition";
 import { getOptionKey } from "@/helpers/getOptionKey";
 import { UiSong } from "@/interfaces/song.interface";
 import { useClickOutside } from "@/hooks/common/useClickOutside";
+import { QueueSections } from "@/interfaces/player.interface";
 
 interface PlayerProps {
     currentSong: UiSong;
-    queueSongs: { queueId: string; song: UiSong }[];
+    queueSongs: QueueSections;
     loading: boolean;
     error: boolean;
 }
@@ -69,9 +70,9 @@ export default function PlayerControls({ queueSongs, currentSong, loading, error
                 />
                 <div className="mx-4 min-w-0">
                     <h4 className="font-semibold truncate text-xs">{currentSong.title}</h4>
-                    <div className="flex gap-x-2 text-xs">
+                    <div onClick={(e) => e.stopPropagation()} className="flex gap-x-2 text-xs">
                         <Link 
-                            href={`/channel/${currentSong.artistName}`} 
+                            href={`/channel/${currentSong.artistId}/${currentSong.artistName.toLowerCase().replace(/\s+/g, "-")}`}
                             className="opacity-85 whitespace-nowrap hover:underline"
                         >
                             {currentSong.artistName}

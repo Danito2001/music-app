@@ -1,5 +1,5 @@
 import { useAudioPlayerContext } from "@/context/audio.context";
-import { setVolume } from "@/store/player/playerSlice";
+import { setVolume } from "@/store/player/player.slice";
 import { RootState } from "@/store/store";
 import { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";

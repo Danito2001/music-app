@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { upsertManyToCatalog } from "@/store/songs/songsSlice";
+import { upsertManyToCatalog } from "@/store/songs/songs.slice";
 import { Loading } from "@/components/common/Loading";
 import { SongCard } from "../../song/SongCard";
 import { getOptionKey } from "@/helpers/getOptionKey";
@@ -49,6 +49,7 @@ export default function TrackList({ q }: { q: string | null }) {
                     return (
                         <div className="flex flex-col gap-y-2 py-1" key={track.id}>
                             <SongCard
+                                playlistId={null}
                                 song={track}
                                 view="queue"
                                 mode="suggestion-standalone"

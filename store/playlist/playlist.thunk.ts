@@ -1,5 +1,5 @@
 import { AppDispatch, RootState } from "../store";
-import { addManySongsToPlaylist } from "./playlistSlice";
+import { addManySongsToPlaylist } from "./playlist.slice";
 
 
 export const addSongsToPlaylist = 

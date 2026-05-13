@@ -1,7 +1,12 @@
 
 export type Privacity = "private" | "public";
 export type Preferences = "liked" | "disliked" | "neutral";
-export type AlbumType = "album" | "single"
+
+export type PlaybackSource =
+	| { type: "playlist"; id: string }
+	| { type: "album"; id: string }
+	| { type: "liked" }
+	| null;
 
 type OptionKey = {
     type:
@@ -19,16 +24,13 @@ type OptionKey = {
 }
 
 export type OptionKeyResult = {
-  type: OptionKey["type"];
-  id?: OptionKey["id"];
-  optionKey: string;
+    type: OptionKey["type"];
+    id?: OptionKey["id"];
+    optionKey: string;
 };
 
 export type PlayType =
-    | "playlist"
-    | "liked"
     | "queue"
-    | "album"
     | "suggestion-standalone"
     | "suggestion-queue"
 

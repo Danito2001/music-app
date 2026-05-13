@@ -1,13 +1,14 @@
 "use client";
 
 import { Privacity } from "@/interfaces/common.interface";
-import { useContext, useMemo, useState, createContext } from "react";
+import { usePathname } from "next/navigation";
+import { useContext, useMemo, useState, createContext, useEffect } from "react";
 
 interface PlaylistToEdit {
 	playlistId: string;
 	title: string;
 	description: string
-	privacity: Privacity;
+	privacity: Privacity;	
 } 
 
 interface SaveModal {
@@ -19,7 +20,12 @@ type ModalType =
 	| { type: "playlistSelect"}
 	| { type: "saveSong", props: SaveModal }
 	| { type: "config"}
-	| { type: "playlistForm", props?: Partial<PlaylistToEdit> }
+	| { 
+		type: "playlistForm", 
+		props?: {
+			playlistId: string,
+		} & Partial<Omit<PlaylistToEdit, "playlistId">>
+}
 
 interface UIContextType {
 	sidebarOpen: boolean;
@@ -41,11 +47,17 @@ const UIContext = createContext<UIContextType | undefined>(undefined);
 
 export function UIProvider({ children }: { children: React.ReactNode }) {
 
+	const pathname = usePathname();
+
 	const [ sidebarOpen, setSidebarOpen ] = useState(true);
 	const [ activeModal, setActiveModal ] = useState<ModalType | null>(null);
 	const [ searchOpen, setSearchOpen ] = useState(false);
 	const [ playerOpen, setPlayerOpen ] = useState(false);
 	const [ color, setColor ] = useState("");
+
+	useEffect(() => {
+		setPlayerOpen(false);
+	}, [pathname]);
 
 	const value = useMemo(() => ({
 		sidebarOpen,

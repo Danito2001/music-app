@@ -16,16 +16,34 @@ export const selectQueueSongs = createSelector(
         (state: RootState) => state.player.queue,
         (state: RootState) => state.songs.catalog.entities
 
-    ], (queue, entities) => 
-        queue.map(item => {
+    ], (queue, entities) => {
+
+        const parsed = queue.map(item => {
             const song = entities[item.songId]
+
             if (!song) return null;
 
             return {
                 queueId: item.queueId,
-                song
+                song,
+                source: item.source
             }
         }).filter(
-            (item): item is { queueId: string; song: UiSong } => item !== null
+            (item): item is {
+                queueId: string; 
+                song: UiSong, source: "manual" | "suggestion";
+            } => item !== null
         )
+
+        return {
+            manual: parsed.filter(item => item.source === "manual"),
+            suggestions: parsed.filter(item => item.source === "suggestion")
+        }
+
+    }
 )
+
+export const selectQueueSongIds = createSelector(
+    [selectQueueSongs],
+    (queueSongs) => queueSongs.manual.map(item => item.song.id)
+);

@@ -3,7 +3,7 @@ import { useForm } from "@/hooks/common/useForm";
 import { Button, Form, Input, Textarea } from "@heroui/react";
 import PrivacitySelect from "@/components/common/OptionSelect/OptionSelect";
 import { useDispatch } from "react-redux";
-import { createPlaylist, updatePlaylist } from "@/store/playlist/playlistSlice";
+import { createPlaylist, updatePlaylist } from "@/store/playlist/playlist.slice";
 import { useUIContext } from "@/context/ui.context";
 import { createPortal } from "react-dom";
 import { nanoid } from "@reduxjs/toolkit";
@@ -13,13 +13,13 @@ import { Playlist } from "@/interfaces/song.interface";
 
 
 interface ModalProps {
-    playlistId?: string
-    title: string;
+    title?: string;
+    playlistId?: string;
     description?: string;
     privacity?: Privacity;
 }
 
-export default function PlaylistModal({ playlistId, title, description = "", privacity = "public" }: ModalProps) {
+export default function PlaylistModal({ playlistId, title = "", description = "", privacity = "public" }: ModalProps) {
 
     const { closeModal } = useUIContext();
 
@@ -36,6 +36,8 @@ export default function PlaylistModal({ playlistId, title, description = "", pri
         songIds: [],
         cover: [],
     })
+
+    console.log({"PlaylistModaId": title})
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
@@ -54,11 +56,15 @@ export default function PlaylistModal({ playlistId, title, description = "", pri
                 }
             }))
 
-        } else {
+        } else {    
+
+            const params = new URLSearchParams({
+                list: formValue.id,
+                type: "playlist",
+            });
 
             dispatch(createPlaylist(formValue))
-            router.push(`/playlist?list=${formValue.id}`)
-        }
+            router.push(`/playlist?${params.toString()}`)}
         closeModal()
         resetValues()
     }
@@ -70,10 +76,10 @@ export default function PlaylistModal({ playlistId, title, description = "", pri
                     onSubmit={handleSubmit}
                 >
                     <div
-                        className="fixed inset-0 z-[999] flex items-center justify-center bg-black/50"
+                        className="fixed inset-0 z-999 flex items-center justify-center bg-black/50"
                     >
-                        <div className="flex flex-col p-4 gap-y-4 rounded-md w-full max-w-md bg-neutral-800">
-                            <h3 className="text-xl font-semibold">{!title && "Nueva Playlist"}</h3>
+                        <div className="flex flex-col p-4 gap-y-4 rounded-md w-full max-w-md bg-neutral-800 text-white">
+                            <h3 className="text-xl font-semibold">{title ? title : "Nueva Playlist"}</h3>
                             <Input
                                 isRequired
                                 placeholder="Titulo"
@@ -111,7 +117,7 @@ export default function PlaylistModal({ playlistId, title, description = "", pri
                                     type="submit"
                                 >
                                     {playlistId ? "Guardar" : "Crear"}
-                                </Button>
+                                </Button> 
                             </div>
                         </div>
                     </div>

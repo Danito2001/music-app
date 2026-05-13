@@ -4,11 +4,14 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 interface PlaylistState {
   	playlists: Playlist[];
 	pinnedPlaylists: string[];
+	suggestions: Record<string, string[]>;
+
 }
 
 const initialState: PlaylistState = {
 	playlists: [],
-	pinnedPlaylists: []
+	pinnedPlaylists: [],
+	suggestions: {}
 };
 
 const playlistSlice = createSlice({
@@ -85,6 +88,12 @@ const playlistSlice = createSlice({
 			state.pinnedPlaylists = state.pinnedPlaylists.filter(
 				id => id !== action.payload
 			)
+		},
+
+		setPlaylistSuggestion: (state, action: PayloadAction<{playlistId: string; ids: string[]}>) => {
+			const { playlistId, ids } = action.payload;
+
+			state.suggestions[playlistId] = ids;
 		}
     },
 });
@@ -98,7 +107,8 @@ export const {
 	addManySongsToPlaylist,
 	removeSongFromPlaylist,
 	addPlaylistToPinned,
-	removePlaylistFromPinned
+	removePlaylistFromPinned,
+	setPlaylistSuggestion
 } = playlistSlice.actions;
 
 export default playlistSlice.reducer;

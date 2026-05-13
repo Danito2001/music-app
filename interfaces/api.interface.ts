@@ -1,6 +1,5 @@
 import { UiAlbum, UiArtist, UiSong } from "./song.interface";
 
-
 export type ArtistResponse = {
     artist: UiArtist;
     tracks: UiSong[];

@@ -7,21 +7,22 @@ import { Icons } from "@/icons";
 import { selectIsSongPinned } from "@/store/songs/songs.selector";
 import { RootState } from "@/store/store";
 import { UiSong } from "@/interfaces/song.interface";
-import { PlayType } from "@/interfaces/common.interface";
 import { Option } from "@/interfaces/ui.interface";
 import { usePlayer } from "../player/usePlayer";
+import { CollectionType } from "../playlist/useCollectionType";
+import { useScreen } from "@/context/screen.context";
 
 interface UseSongOptionsProps {
     song: UiSong;
-    mode: PlayType;
+    playlistId: string | null;
+    source?: CollectionType;
     queueId?: string;
-    playlistId?: string;
 }
 
 export const useSongOptions = ({
     song,
     queueId,
-    mode,
+    source,
     playlistId 
 }: UseSongOptionsProps) => {
 
@@ -29,19 +30,26 @@ export const useSongOptions = ({
 
     const modalOpen = useUIContext().modalOpen;
     const removeSong = usePlaylistActions().removeSong;
+    const isMobile = useScreen();
 
     const player = usePlayerActions();
     const currentSongId = usePlayer().currentSongId;
 
     const isPinned = useSelector((state: RootState) => selectIsSongPinned(state, song.id));
 
+    
     const options: Option[] = [
+        ...(isMobile ? [{ 
+            icon: song.liked === "liked" ? Icons.Liked : Icons.Like,
+            label: "Agregar a Me Gusta", 
+            action: () => player.likedSong(song.id) }] : []
+        ),
         { icon: Icons.Playlist, label: "Reproducir a continuación", action: () => player.addNextSong(song.id) },
         { icon: Icons.Playlist, label: "Agregar a la fila", action: () => player.addSong(song.id) },
         { icon: Icons.PlaylistAdd, label: "Guardar en una playlist", action: () => modalOpen({ type: "saveSong", props: {
             songId: song.id
         } }) },
-        ...(playlistId && mode === "playlist"
+        ...(playlistId && source === "playlist"
             ? [{icon: Icons.PlaylistRemove, label: "Quitar de la playlist", action: () => removeSong(playlistId, song.id)}]
             : []),
         ...(queueId

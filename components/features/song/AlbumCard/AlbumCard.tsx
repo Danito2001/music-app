@@ -20,10 +20,13 @@ export default function AlbumCard({
         <div className={`flex gap-3 w-full min-w-0 ${isRow ? "flex-row items-center justify-between" : "flex-col"}`}>
             
             <Link
-                className="group relative shrink-0"
+                className="group relative w-fit shrink-0"
                 href={{
                     pathname: "/playlist",
-                    query: { list: album.id }
+                    query: {
+                        list: album.id,
+                        type: viewType
+                    }
                 }}
             >
                 <CoverImage images={album.cover} size={size} />
@@ -36,15 +39,18 @@ export default function AlbumCard({
                     {album.title}
                 </span>
 
-                <div className="flex items-center min-w-0 text-xs md:text-sm">
+                <div className="flex items-center min-w-0 text-xs lg:text-sm">
                     {album.artistName && (
-                        <div className="flex flex-nowrap opacity-80">
+                        <div className="flex flex-nowrap opacity-80 min-w-0">
                             <span>Álbum •</span>
                             <Link 
                                 className="min-w-0 truncate block hover:underline"
                                 href={{
                                     pathname: "/playlist",
-                                    query: { list: album.id }
+                                    query: { 
+                                        list: album.id,
+                                        type: "album"
+                                    }
                                 }} 
                             >
                                 {album.artistName}

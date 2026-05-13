@@ -17,8 +17,9 @@ export default function ModalRender() {
         case "saveSong":
             return <SaveSongModal onClose={closeModal} {...activeModal.props}/>;
 
-        case "playlistForm":
-            return <PlaylistModal title={activeModal.props?.title ?? ""}/>;
+        case "playlistForm": {
+            return <PlaylistModal {...activeModal.props}/>;
+        }
     
         default:
             return null;

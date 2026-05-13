@@ -1,6 +1,6 @@
 "use client";
 
-import { setSeekTo } from "@/store/player/playerSlice";
+import { setSeekTo } from "@/store/player/player.slice";
 import { RootState } from "@/store/store";
 import { createContext, useContext, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";

@@ -8,7 +8,7 @@ import usePlayerActions from "@/hooks/features/player/usePlayerActions";
 import { MdOutlinePlaylistAdd } from "react-icons/md";
 import { formatTime } from "@/helpers/formatTime";
 import Link from "next/link";
-import { pause, play } from "@/store/player/playerSlice";
+import { pause, play } from "@/store/player/player.slice";
 import { useDispatch } from "react-redux";
 import { useFloatingPosition } from "@/hooks/common/useFloatingPosition";
 import { UiSong } from "@/interfaces/song.interface";
@@ -16,14 +16,16 @@ import { Option } from "@/interfaces/ui.interface";
 import { OptionKeyResult, PlayType, ViewCard } from "@/interfaces/common.interface";
 import { usePlayer } from "@/hooks/features/player/usePlayer";
 import { useClickOutside } from "@/hooks/common/useClickOutside";
+import { CollectionType } from "@/hooks/features/playlist/useCollectionType";
 
 type SongRowData = {
     song: UiSong;
     options: Option[];
-    playlistId?: string;
     currentSongId: string | null;
     view: Exclude<ViewCard, "large">;
-    mode: PlayType;
+    playlistId: string | null;
+    mode?: PlayType;
+    source?: CollectionType;
     optionKey: OptionKeyResult;
 }
 
@@ -35,7 +37,7 @@ type CardVariantConfig = {
     isLarge?: boolean;
 };
 
-export default function SongRowSuggestion({ song, currentSongId, options, view, playlistId, mode, optionKey }: SongRowData) {
+export default function SongRowSuggestion({ song, currentSongId, options, view, playlistId, mode, source, optionKey }: SongRowData) {
 
     const dispatch = useDispatch();
     const player = usePlayerActions();
@@ -68,7 +70,7 @@ export default function SongRowSuggestion({ song, currentSongId, options, view, 
                 {/* left side */}
                 <div className="flex gap-x-4 min-w-0">
 
-                    <div className="group relative flex items-center justify-center min-w-0">
+                    <div className="group relative flex shrink-0 items-center justify-center min-w-0">
                         <Image
                             src={song.cover}
                             alt={song.albumTitle}
@@ -83,7 +85,12 @@ export default function SongRowSuggestion({ song, currentSongId, options, view, 
                             className="absolute opacity-0 group-hover:opacity-100"
                             onPress={() => 
                                 !isActive
-                                    ? player.playSong(song.id, mode, playlistId)
+                                    ? player.playSong({
+                                        songId: song.id,
+                                        mode,
+                                        source,
+                                        playlistId
+                                      })
                                     : isPlaying 
                                         ? dispatch(pause())
                                         : dispatch(play())
@@ -116,7 +123,10 @@ export default function SongRowSuggestion({ song, currentSongId, options, view, 
                                 className="hover:underline truncate"
                                 href={{
                                     pathname: "/playlist",
-                                    query: { list: song.albumId }
+                                    query: {
+                                        list: song.albumId,
+                                        type: "album"
+                                    }
                                 }}
                             >
                                 {song.albumTitle}

@@ -17,27 +17,33 @@ export const useFloatingPosition = () => {
     const handleOpen = (key: string) => {
         const isOpening = optionsOpen !== key
 
-        if (isOpening && buttonRef.current) {
-            const rect = buttonRef.current.getBoundingClientRect();
-
-            const menuRect = menuRef.current?.getBoundingClientRect();
-            const height = menuRect?.height ?? 250;
-
-            let left = rect.left
-            let top = rect.bottom;
-
-            if (left + 250 > window.innerWidth) {
-                left = rect.right - 250
-            }
-
-            if (rect.bottom + height > window.innerHeight) {
-                top = rect.top - height;
-            }
-
-            setPosition({
-                top,
-                left
-            });
+        if (isOpening) {
+            requestAnimationFrame(() => {
+                if (!buttonRef.current) return;
+                
+                const rect = buttonRef.current.getBoundingClientRect();
+    
+                const menuRect = menuRef.current?.getBoundingClientRect();
+                const height = menuRect?.height ?? 250;
+    
+                console.log({height})
+    
+                let left = rect.left
+                let top = rect.bottom;
+    
+                if (left + 250 > window.innerWidth) {
+                    left = rect.right - 250
+                }
+    
+                if (rect.bottom + height > window.innerHeight) {
+                    top = rect.top - height;
+                }
+    
+                setPosition({
+                    top,
+                    left
+                });
+            })
         }
 
         toggleOptions(key)

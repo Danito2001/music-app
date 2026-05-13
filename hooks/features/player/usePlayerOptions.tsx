@@ -6,10 +6,11 @@ import { Icons } from "@/icons";
 import { selectCurrentPinned } from "@/store/songs/songs.selector";
 import { UiSong } from "@/interfaces/song.interface";
 import { useScreen } from "@/context/screen.context";
+import { QueueSections } from "@/interfaces/player.interface";
 
 interface OptionProps {
     currentSong: UiSong; 
-    queueSongs: { queueId: string; song: UiSong }[]
+    queueSongs: QueueSections;
 }
 
 export const usePlayerOptions = (
@@ -19,11 +20,11 @@ export const usePlayerOptions = (
     const { addSong, addNextSong, removeSong, goToArtist, clearQueueAction, addPinned, removePinned, likedSong } = usePlayerActions();
     const modalOpen = useUIContext().modalOpen;
     const path = usePathname();
-    const {isMobile } = useScreen();
+    const isMobile = useScreen()
 
     const alreadyPinned = useSelector(selectCurrentPinned);
 
-    const currentQueueItem = queueSongs.find(
+    const currentQueueItem = queueSongs.manual.find(
         item => item.queueId === currentSong.id
     );
 
@@ -39,7 +40,7 @@ export const usePlayerOptions = (
         { icon: Icons.Playlist, label: "Agregar a la fila", action: () => addSong(currentSong.id) }, 
         { 
             icon: Icons.PlaylistAdd, label: "Guardar en una playlist", 
-            action: () => modalOpen({ type: "saveSong", props: { songId: currentSong.id } }) 
+            action: () => modalOpen({ type: "saveSong", props: { songId: currentSong.id } })
         },
         ...(queueId 
             ? [{ icon: Icons.PlaylistRemove, label: "Quitar de la fila", action: () => removeSong(queueId, currentSong.id), }] 

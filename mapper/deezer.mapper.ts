@@ -14,6 +14,10 @@ export const mapDeezerArtistToUiArtist = (artist:DeezerArtist):UiArtist => {
 export const mapDeezerAlbumToUiAlbum = 
     (album:DeezerAlbum, artistId?: string): UiAlbum => {
 
+        if (!album || !album.id) {
+            throw new Error("Invalid album data from API");
+        }
+
         const year = album?.release_date 
             ? new Date(album.release_date).getFullYear()
             : ""

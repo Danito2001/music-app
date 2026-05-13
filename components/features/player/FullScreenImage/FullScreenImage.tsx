@@ -1,7 +1,7 @@
 "use client";
 
 import { usePlayer } from "@/hooks/features/player/usePlayer";
-import { pause, play } from "@/store/player/playerSlice";
+import { pause, play } from "@/store/player/player.slice";
 import { Button } from "@heroui/react";
 import Image from "next/image";
 import { useRef, useState } from "react"

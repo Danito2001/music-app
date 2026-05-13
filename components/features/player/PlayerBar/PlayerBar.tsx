@@ -7,23 +7,23 @@ import classNames from "classnames";
 import { RelatedSongs } from "../RelatedSongs";
 import FullScreenImage from "../FullScreenImage/FullScreenImage";
 import usePlayerActions from "@/hooks/features/player/usePlayerActions";
-import { pause, setCurrentTime, setDuration, setVolume } from "@/store/player/playerSlice";
+import { pause, setCurrentTime, setDuration, setVolume } from "@/store/player/player.slice";
 import { useAudio } from "@/hooks/features/player/useAudio";
 import { usePlayer } from "@/hooks/features/player/usePlayer";
-import VolumeControls from "../VolumeControls/VolumeControls";
-import PlayerControls from "../PlayerControls/PlayerControls";
 import { selectCurrentSong, selectQueueSongs } from "@/store/player/player.selector";
 import { toast } from "@/helpers/toast";
 import { useLockScroll } from "@/hooks/common/useLockScroll";
+import { VolumeControls } from "../VolumeControls";
+import { PlayerControls } from "../PlayerControls";
 
 
 export default function MusicPlayer() {
 
-    const player = usePlayerActions();
-    const { audioRef, progress, dispatch, duration, tempValue, setTempValue, isSeeking, setIsSeeking, currentSongId } = usePlayer();
+    const playNext = usePlayerActions().playNext;
+    const player = usePlayer();
     const { togglePlayer, playerOpen, sidebarOpen } = useUIContext();
 
-    const { loading, error, setError, handlers } = useAudio(audioRef);
+    const { loading, error, setError, handlers } = useAudio(player.audioRef);
 
     const currentSong = useSelector(selectCurrentSong)
     const queueSongs = useSelector(selectQueueSongs)
@@ -33,26 +33,26 @@ export default function MusicPlayer() {
     useEffect(() => {
         if (error !== null) {
             { } toast("Error", error)
-            dispatch(pause())
+            player.dispatch(pause())
         }
 
     }, [error])
 
     useEffect(() => {
-        if (currentSongId) {
+        if (player.currentSongId) {
             setError(null);
         }
-    }, [currentSongId])
+    }, [player.currentSongId])
 
     if (!currentSong) return null;
 
-    const currentProgress = isSeeking ? tempValue : progress
+    const currentProgress = player.isSeeking ? player.tempValue : player.progress
 
     return (
         <>
-            <div className={`fixed bottom-0 flex items-center transition-height z-40 w-full h-[70px] bg-neutral-800`}>
+            <div className={`fixed bottom-0 flex items-center transition-height z-40 w-full h-17.5 bg-neutral-800`}>
 
-                <div className="absolute bottom-[60px] w-full">
+                <div className="absolute bottom-15 w-full">
                     <input
                         type="range"
                         className="w-full h-1 slider-audio"
@@ -61,20 +61,20 @@ export default function MusicPlayer() {
                         }}
                         min={0}
                         max={100}
-                        value={isSeeking ? tempValue : progress}
-                        onPointerDown={() => setIsSeeking(true)}
+                        value={player.isSeeking ? player.tempValue : player.progress}
+                        onPointerDown={() => player.setIsSeeking(true)}
                         onChange={(e) => {
-                            setTempValue(Number(e.target.value));
+                            player.setTempValue(Number(e.target.value));
                         }}
                         onPointerUp={(e) => {
-                            if (!audioRef.current) return;
+                            if (!player.audioRef.current) return;
 
                             const value = Number((e.target as HTMLInputElement).value);
-                            const newTime = (value / 100) * duration;
+                            const newTime = (value / 100) * player.duration;
 
-                            audioRef.current.currentTime = newTime;
-                            dispatch(setCurrentTime(newTime));
-                            setIsSeeking(false);
+                            player.audioRef.current.currentTime = newTime;
+                            player.dispatch(setCurrentTime(newTime));
+                            player.setIsSeeking(false);
                         }}
                     />
                 </div>
@@ -93,8 +93,8 @@ export default function MusicPlayer() {
             {/* queue */}
             <div className={classNames(
                 "fixed z-min-w-0 flex-1 30 overflow-y-auto transition-height duration-300 bottom-0 bg-black inset-x-0",
-                playerOpen ? "h-[calc(100vh-60px)]" : "h-[70px]",
-                sidebarOpen ? "lg:ml-[220px]" : "ml-0 sm:ml-[75px]"
+                playerOpen ? "h-[calc(100vh-60px)]" : "h-17.5",
+                sidebarOpen ? "lg:ml-55" : "ml-0 sm:ml-18.75"
             )}
             >
                 <div className="flex flex-col items-center justify-center mx-4 lg:mx-20 lg:gap-x-20 lg:flex-row">
@@ -108,19 +108,19 @@ export default function MusicPlayer() {
             
             <audio
                 src={currentSong.preview}
-                ref={audioRef}
+                ref={player.audioRef}
                 onTimeUpdate={() => {
-                    if (!audioRef.current) return;
-                    dispatch(setCurrentTime(audioRef.current.currentTime))
+                    if (!player.audioRef.current) return;
+                    player.dispatch(setCurrentTime(player.audioRef.current.currentTime))
                 }}
                 onLoadedMetadata={() => {
-                    if (!audioRef.current) return;
-                    dispatch(setDuration(audioRef.current.duration));
+                    if (!player.audioRef.current) return;
+                    player.dispatch(setDuration(player.audioRef.current.duration));
                 }}
-                onEnded={() => player.playNext()}
+                onEnded={() => playNext()}
                 onVolumeChange={(e) => {
                     const audio = e.currentTarget.volume;
-                    dispatch(setVolume(audio));
+                    player.dispatch(setVolume(audio));
                 }}
                 onPlaying={handlers.onCanPlay}
                 onWaiting={handlers.onLoadStart}

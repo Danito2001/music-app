@@ -28,14 +28,14 @@ export default function SidebarContent() {
     return (
         <nav
             className={classNames("fixed p-4 z-40 space-y-4 transition-colors sm:block",
-                sidebarOpen ? "w-[220px] bg-primary border-r border-r-white/10" : "hidden sm:w-[75px]",
+                sidebarOpen ? "w-55 bg-primary border-r border-r-white/10" : "hidden sm:w-[75px]",
                 currentSong ? "h-[calc(100vh-70px)]" : "h-full",
                 playerOpen
                     ? "bg-primary border-r border-r-white/10"
                     : scrolled ? "bg-primary border-r border-r-white/10" : "bg-transparent border-none",
             )}
         >
-            <div className="flex flex-col gap-y-6 pt-[60px] h-full text-white">
+            <div className="flex flex-col gap-y-6 pt-15 h-full text-white">
                 <div className="flex flex-col">
                     <SidebarModule isOpen={sidebarOpen} icon={<Icons.Home size={20} />} label={"Principal"} href={"/"} />
                     <SidebarModule isOpen={sidebarOpen} icon={<Icons.Library size={20} />} label={"Biblioteca"} href={"/library"} />
@@ -52,7 +52,10 @@ export default function SidebarContent() {
                                     <span className="text-xs font-semibold">Nueva Playlist</span>
                                 </Button>
                             <div className="flex-1 scrollbar">
-                                <Link href={"/playlist?list=LM"}
+                                <Link href={{
+                                    pathname: "/playlist",
+                                    query: { list: "LM", type: "liked"}
+                                }}
                                     className={`block p-2 rounded-lg hover:bg-white/10 transition-background 
                                         ${isActive("LM") && "bg-white/10"}`}
                                 >

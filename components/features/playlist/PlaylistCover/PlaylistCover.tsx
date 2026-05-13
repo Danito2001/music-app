@@ -10,28 +10,35 @@ import { CoverImage } from "../CoverImage/CoverImage";
 import { usePlaylistOptions } from "@/hooks/features/playlist/usePlaylistOptions";
 import { useFloatingPosition } from "@/hooks/common/useFloatingPosition";
 import { getOptionKey } from "@/helpers/getOptionKey";
-import { CollectionView, SourceType } from "@/interfaces/collection.interface";
+import { CollectionView } from "@/interfaces/collection.interface";
 import { UiAlbum } from "@/interfaces/song.interface";
 import { useClickOutside } from "@/hooks/common/useClickOutside";
+import { CollectionType } from "@/hooks/features/playlist/useCollectionType";
+import { EmptyCover } from "../EmptyCover";
 
 interface CoverProps {
-    collection: CollectionView;
+    collection: CollectionView | null;
     playlistId: string;
     album: UiAlbum | undefined;
-    type: SourceType;
+    source: Exclude<CollectionType, "artist">;
 }
 
-export default function PlaylistCover({ collection, playlistId, album, type }: CoverProps) {
-
+export default function PlaylistCover({ collection, playlistId, album, source }: CoverProps) {
+    
+    
     const modalOpen = useUIContext().modalOpen;
     const playPlaylist = usePlayerActions().playPlaylist;
     const floating = useFloatingPosition();
-    const { isAlbum, options } = usePlaylistOptions({collection, playlistId, type});
-
+    const { isAlbum, options } = usePlaylistOptions({playlistId, source});
+    
     useClickOutside(floating.menuRef, () => {
         floating.closeOptions()
     }, floating.optionsOpen)
     
+    if (!collection) {
+        return <EmptyCover/>
+    }
+
     const optionKey = getOptionKey("playlist")
 
     const isOpen = floating.optionsOpen === optionKey.optionKey
@@ -47,7 +54,7 @@ export default function PlaylistCover({ collection, playlistId, album, type }: C
                     : <CoverImage images={gridImages} size="lg"/>
                 }
 
-                {collection.type === "playlist" && (
+                {isPlaylist && (
                     <Button
                         radius="full"
                         className="absolute bottom-2 right-2 bg-white"
@@ -86,7 +93,7 @@ export default function PlaylistCover({ collection, playlistId, album, type }: C
                 <Button
                     className="rounded-full bg-white"
                     isIconOnly
-                    onPress={() => playPlaylist(playlistId, type)}
+                    onPress={() => playPlaylist(playlistId, collection.type)}
                 >
                     <Icons.Play size={20} className="mx-auto text-black" />
                 </Button>

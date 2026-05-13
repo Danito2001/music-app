@@ -10,7 +10,7 @@ import { AlbumCard } from "../../features/song/AlbumCard";
 import { Icons } from "@/icons";
 import Link from "next/link";
 import { useDispatch } from "react-redux";
-import { upsertManyToCatalog } from "@/store/songs/songsSlice";
+import { upsertManyToCatalog } from "@/store/songs/songs.slice";
 import { TrackList } from "../../features/search/TrackList";
 import { ArtistList } from "../../features/search/ArtistList";
 import { getOptionKey } from "@/helpers/getOptionKey";
@@ -99,6 +99,7 @@ export default function SearchClient({ initialData, q }: { initialData: SearchRe
                                     return (
                                         <SongCard
                                             key={track.id}
+                                            playlistId={null}
                                             song={track}
                                             view="search"
                                             mode="suggestion-standalone"
@@ -133,6 +134,7 @@ export default function SearchClient({ initialData, q }: { initialData: SearchRe
                             return (
                                 <div className="flex flex-col gap-y-2 py-1" key={track.id}>
                                     <SongCard
+                                        playlistId={null}
                                         song={track}
                                         view="search"
                                         mode="suggestion-standalone"

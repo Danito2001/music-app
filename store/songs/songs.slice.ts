@@ -12,12 +12,10 @@ interface SongsState {
 	pinned: string[];
 	liked: string[];
 	history: string[];
-	globalSuggestions: string[];
-  	playlistSuggestions: {
-		ids: string[];
+	suggestions: {
+		global: string[];
 		loading: boolean;
-	};
-
+	}
 	currentQuery: string;
 	searchCache: Record<string, SearchEntry>
 }
@@ -31,12 +29,10 @@ const songsInitialState: SongsState = {
 	pinned: [],
 	liked: [],
 	history: [],
-	globalSuggestions: [],
-	playlistSuggestions: {
-		ids: [],
+	suggestions: {
+		global: [],
 		loading: false
 	},
-
 	currentQuery: "",
 	searchCache: {}
 };
@@ -99,30 +95,21 @@ const songsSlice = createSlice({
 
 		// Suggestions
 		setGlobalSuggestions: (state, action: PayloadAction<string[]>) => {
-			state.globalSuggestions = action.payload;
-		},
-		setPlaylistSuggestions: (state, action: PayloadAction<string[]>) => {
-			state.playlistSuggestions.ids = action.payload;
+
+			state.suggestions.global = action.payload;
 		},
 
 		removeFromGlobalSuggestions: (state, action: PayloadAction<string>) => {
-			state.globalSuggestions = state.globalSuggestions.filter(
-				id => id !== action.payload
-			)
-		},
-
-		removeFromPlaylistSuggestions: (state, action: PayloadAction<string>) => {
-			state.playlistSuggestions.ids = state.playlistSuggestions.ids.filter(
+			state.suggestions.global = state.suggestions.global.filter(
 				id => id !== action.payload
 			)
 		},
 
 		setLoading: (state, action: PayloadAction<boolean>) => {
-            state.playlistSuggestions.loading = action.payload;
+            state.suggestions.loading = action.payload;
         },
 
 		
-
 		upsertManyToCatalog: (state, action:PayloadAction<UiSong[]>) => {
 			catalogAdapter.upsertMany(state.catalog, action.payload)
 		},
@@ -149,9 +136,7 @@ export const {
 	addSongToHistory,
 
 	setGlobalSuggestions,
-	setPlaylistSuggestions,
 	removeFromGlobalSuggestions,
-	removeFromPlaylistSuggestions,
 	setLoading,
 
 	addSongToPinned,

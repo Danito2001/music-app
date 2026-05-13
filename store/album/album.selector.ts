@@ -1,19 +1,11 @@
-    import { createSelector } from "@reduxjs/toolkit";
-import { albumAdapter } from "./albumSlice";
+import { createSelector } from "@reduxjs/toolkit";
+import { albumAdapter } from "./album.slice";
 import { RootState } from "../store";
+import { UiSong } from "@/interfaces/song.interface";
 
 export const albumSelector = albumAdapter.getSelectors(
     (state: RootState) => state.album.catalog
 );
-
-export const selectAlbumsByArtist = createSelector(
-    [
-        albumSelector.selectAll,
-        (_:RootState, artistId: string) => artistId
-    ],
-    (albums, artistId) =>
-        albums.filter(album => album.artistId === artistId)
-)
 
 export const selectAlbumSongIdsById = createSelector(
     [
@@ -23,13 +15,31 @@ export const selectAlbumSongIdsById = createSelector(
         album => album.songIds
 )
 
+const EMPTY_ARRAY: string[] = [];
+
 export const selectTracksForAlbum = createSelector(
     [
-        (state: RootState, albumId: string) => state.album.catalog.entities[albumId]?.songIds || [],
-        (state: RootState) => state.songs.catalog.entities
-    ], (ids, entities) => ids.map(id => entities[id]).filter(Boolean)
-)
+        (state: RootState) => state.album.catalog.entities,
+        (state: RootState) => state.songs.catalog.entities,
+        (_: RootState, albumId: string | null) => albumId
+    ],
+    (albums, songs, albumId): UiSong[] => {
+        if (!albumId) return [];
 
-export const selectAlbumSongIds = (albumId: string, state: RootState) => {
-    return state.album.catalog.entities[albumId].songIds
-}
+        const songIds = albums[albumId]?.songIds ?? [];
+
+        return songIds
+            .map(id => songs[id])
+            .filter(Boolean);
+    }
+);
+
+export const selectAlbumSongIds = createSelector(
+    [
+        (state: RootState) => state.album.catalog.entities,
+        (_: RootState, albumId: string) => albumId
+    ],
+    (entities, albumId) => {
+        return entities[albumId]?.songIds ?? EMPTY_ARRAY;
+    }
+);

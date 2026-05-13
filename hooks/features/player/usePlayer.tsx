@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 export const usePlayer = () => {
 
     const dispatch = useDispatch();
-    const { isPlaying, currentTime, duration, volume, currentSongId, repeat } = useSelector(
+    const { isPlaying, currentTime, duration, volume, currentSongId, repeat, currentSource } = useSelector(
         (state: RootState) => state.player
     );
 
@@ -27,6 +27,7 @@ export const usePlayer = () => {
         volume,
         currentSongId,
         repeat,
+        currentSource,
         progress,
         tempValue,
         setTempValue,

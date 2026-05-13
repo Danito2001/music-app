@@ -10,9 +10,10 @@ import usePlayerActions from "@/hooks/features/player/usePlayerActions";
 import { Icons } from "@/icons";
 import { ArtistResponse } from "@/interfaces/api.interface";
 import { selectLikedSong } from "@/store/songs/songs.selector";
-import { upsertManyToCatalog } from "@/store/songs/songsSlice";
+import { upsertManyToCatalog } from "@/store/songs/songs.slice";
 import { Button } from "@heroui/react";
 import Image from "next/image"
+import Link from "next/link";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -31,6 +32,7 @@ export default function ChannelClient({ data }: { data: ArtistResponse }) {
         dispatch(upsertManyToCatalog(tracks))
     }, [dispatch, tracks])
 
+    console.log({tracks})
 
     return (
         <>
@@ -89,27 +91,36 @@ export default function ChannelClient({ data }: { data: ArtistResponse }) {
                 </div>
             </div>
             <div className="flex flex-col gap-y-10 mt-[90vh] w-full text-white">
-                <div>
-                    <h3 className="pb-2 font-semibold text-xl">Canciones más populares</h3>
-                    {tracks.map(track => {
-                        const option = getOptionKey("song", track.id)
-                        return (
-                            <SongCard
-                                key={track.id}
-                                song={track}
-                                view="search"
-                                mode="suggestion-standalone"
-                                optionKey={option}
-                            />
-                        )
-                    })}
-                    <Button className="mt-2 border border-white/10 hover:bg-white/30" radius="full">
+                <div className="space-y-6">
+                    <div>
+                        <h3 className="pb-2 font-semibold text-xl">Canciones más populares</h3>
+                        {tracks.map(track => {
+                            const option = getOptionKey("song", track.id)
+                            return (
+                                <SongCard
+                                    key={track.id}
+                                    playlistId={null}
+                                    song={track}
+                                    view="search"
+                                    mode="suggestion-standalone"
+                                    optionKey={option}
+                                />
+                            )
+                        })}
+                    </div>
+                    <Link
+                        className="p-2 rounded-lg border border-white/10 hover:bg-white/30"
+                        href={{
+                            pathname: "/playlist",
+                            query: { artist: artist.id, type: "artist" }
+                        }}
+                    >
                         Mostrar todo
-                    </Button>
+                    </Link>
                 </div>
 
                 <Carousel title="Álbumes">
-                    <div className="flex w-fit">
+                    <div className="flex gap-x-4">
                         {albums.slice(0, 8).map(album =>
                             <AlbumCard
                                 key={album.id}
@@ -129,6 +140,7 @@ export default function ChannelClient({ data }: { data: ArtistResponse }) {
                             return (
                                 <SongCard
                                     key={track.id}
+                                    playlistId={null}
                                     song={track}
                                     view="large"
                                     mode="suggestion-standalone"

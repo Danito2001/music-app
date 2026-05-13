@@ -1,11 +1,11 @@
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
-import { addSongToPlaylist, removeSongFromPlaylist, removePlaylist as removePlaylistAction, addPlaylistToPinned, removePlaylistFromPinned } from "@/store/playlist/playlistSlice";
+import { addSongToPlaylist, removeSongFromPlaylist, removePlaylist as removePlaylistAction, addPlaylistToPinned, removePlaylistFromPinned } from "@/store/playlist/playlist.slice";
 import { toast } from "@/helpers/toast";
 import { addSongsToPlaylist } from "@/store/playlist/playlist.thunk";
 import { AppDispatch } from "@/store/store";
-import { setSuggestionSongsFromPlaylist } from "@/store/songs/songs.thunk";
 import { useCallback } from "react";
+import { loadSuggestions } from "@/store/songs/songs.thunk";
 
 
 export default function usePlaylistActions() {
@@ -26,9 +26,9 @@ export default function usePlaylistActions() {
     const removeSong = (playlistId: string, songId: string) => 
         dispatch(removeSongFromPlaylist({ playlistId, songId }));
 
-    const sugestionFromPlaylist = useCallback((playlistId?: string) => {
-        dispatch(setSuggestionSongsFromPlaylist(playlistId))
-    }, [dispatch])
+    const setSuggestions = (playlistId: string) => {
+        dispatch(loadSuggestions(playlistId))
+    }
     
     const removePlaylist = (id: string) => {
         toast(null, "Se borró la playlist")
@@ -50,8 +50,8 @@ export default function usePlaylistActions() {
     return {
         addSong,
         addManySongs,
+        setSuggestions,
         removeSong,
-        sugestionFromPlaylist,
         removePlaylist,
         addPinned,
         removePinned

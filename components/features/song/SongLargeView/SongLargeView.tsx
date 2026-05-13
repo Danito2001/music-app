@@ -7,7 +7,7 @@ import { PlaybackOptions } from "../../player/PlaybackOptions";
 import usePlayerActions from "@/hooks/features/player/usePlayerActions";
 import Link from "next/link";
 import { useDispatch } from "react-redux";
-import { pause, play } from "@/store/player/playerSlice";
+import { pause, play } from "@/store/player/player.slice";
 import { useFloatingPosition } from "@/hooks/common/useFloatingPosition";
 import { UiSong } from "@/interfaces/song.interface";
 import { Option } from "@/interfaces/ui.interface";
@@ -39,7 +39,7 @@ export default function SongLargeView({ song, options, currentSongId, mode, opti
     const isOpen = floating.optionsOpen === optionKey.optionKey
 
     return (
-        <div className="flex flex-col shrink-0 w-[160px] text-white">
+        <div className="flex flex-col shrink-0 w-40 text-white">
             <div className="group relative flex items-center justify-center w-fit">
                 <Image
                     src={song.cover}
@@ -55,7 +55,11 @@ export default function SongLargeView({ song, options, currentSongId, mode, opti
                     className="absolute group"
                     onPress={() =>
                         !isActive
-                            ? player.playSong(song.id, mode)
+                            ? player.playSong({
+                                songId: song.id,
+                                mode,
+                                playlistId: null
+                              })
                             : isPlaying
                                 ? dispatch(pause())
                                 : dispatch(play())

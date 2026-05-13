@@ -6,7 +6,7 @@ export default function GeneralModal() {
 
     return (
         <div className="flex flex-col px-8 py-10 gap-y-6 w-full">
-            <div>
+            <div className="text-white">
                 <div className="flex justify-between">
                     <h4 className="font-semibold text-sm md:text-lg">Modo restringido</h4>
                     <Switcher />
@@ -16,7 +16,7 @@ export default function GeneralModal() {
                 </p>
                 <Divider/>
             </div>
-            <div>
+            <div className="text-white">
                 <div className="flex justify-between">
                     <h4 className="font-semibold text-sm md:text-lg">Mostrar la música que te gustó de YouTube</h4>
                     <Switcher />

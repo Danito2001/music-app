@@ -7,7 +7,7 @@ import { SongCard } from "../../features/song/SongCard";
 import { AlbumCard } from "../../features/song/AlbumCard";
 import { ArtistCard } from "../../features/song/ArtistCard";
 import { useEffect } from "react";
-import { upsertManyToCatalog } from "@/store/songs/songsSlice";
+import { upsertManyToCatalog } from "@/store/songs/songs.slice";
 import { getPlaylistCover } from "@/helpers/getPlaylistCover";
 import { RootState } from "@/store/store";
 import { getOptionKey } from "@/helpers/getOptionKey";
@@ -28,7 +28,6 @@ export default function HomeClient({ data }: { data: ChartResponse }) {
         dispatch(upsertManyToCatalog(tracks))
     }, [tracks, dispatch])
 
-
     return (
         <div className="flex flex-col">
             {Object.values(pinnedItems).some(arr => arr.length > 0) &&
@@ -40,6 +39,7 @@ export default function HomeClient({ data }: { data: ChartResponse }) {
                             return (
                                 <SongCard
                                     key={track.id}
+                                    playlistId={null}
                                     song={track}
                                     view="large"
                                     mode="suggestion-standalone"
@@ -60,7 +60,8 @@ export default function HomeClient({ data }: { data: ChartResponse }) {
                             />
                         )}
                     </div>
-                </Carousel>)}
+                </Carousel>)
+            }
 
             <div className="flex flex-col gap-y-4 mb-20">
                 {historySongs.length > 0 && (
@@ -71,6 +72,7 @@ export default function HomeClient({ data }: { data: ChartResponse }) {
                             return (
                                 <SongCard
                                     key={track.id}
+                                    playlistId={null}
                                     song={track}
                                     view="large"
                                     mode="suggestion-standalone"
@@ -87,6 +89,7 @@ export default function HomeClient({ data }: { data: ChartResponse }) {
                         return (
                             <SongCard
                                 key={track.id}
+                                playlistId={null}
                                 song={track}
                                 view="large"
                                 mode="suggestion-standalone"
@@ -96,7 +99,7 @@ export default function HomeClient({ data }: { data: ChartResponse }) {
                     })}
                 </Carousel>
                 <Carousel title="Playlist más populares">
-                    <div className="flex gap-x-2">
+                    <div className="flex gap-x-4">
                         {albums.map(album =>
                             <AlbumCard
                                 key={album.id}

@@ -28,7 +28,7 @@ export default function SaveSongModal({ onClose, songId, songIds }: SaveSongProp
         createPortal(
             <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/50">
 
-                <div className="relative flex flex-col gap-y-2 border border-neutral-700 rounded-2xl w-full max-w-md h-[80vh] bg-neutral-800">
+                <div className="relative flex flex-col gap-y-2 border border-neutral-700 rounded-2xl w-full max-w-md h-[80vh] bg-neutral-800 text-white">
 
                     <div className="flex items-center justify-between p-4">
                         <h3 className="text-xl font-bold">Guardar en una playlist</h3>

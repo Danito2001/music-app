@@ -1,5 +1,5 @@
 
-export const shuffle = (arr: string[]) => {
+export const shuffle = <T,>(arr: T[]): T[] => {
 
     const result = [...arr]
 

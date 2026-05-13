@@ -32,7 +32,7 @@ export default function OptionSelect({ selected, setSelected }: OptionsProps) {
             </Button>
 
             {open && (
-                <div className="absolute w-full bg-neutral-900">
+                <div className="absolute w-full bg-neutral-900 text-white">
                     <Button
                         onPress={() => handleSelect("public")}
                         startContent={<TbWorld size={20} />}

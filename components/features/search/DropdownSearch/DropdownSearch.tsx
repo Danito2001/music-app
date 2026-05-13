@@ -60,6 +60,7 @@ export default function DropdownSearch({
                 return (
                     <SongCard
                         key={track.id}
+                        playlistId={null}
                         song={track}
                         view="search"
                         mode="suggestion-standalone"

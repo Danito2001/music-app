@@ -4,7 +4,7 @@ import { usePlayer } from "@/hooks/features/player/usePlayer";
 import usePlayerActions from "@/hooks/features/player/usePlayerActions";
 import { useVolumeControls } from "@/hooks/features/player/useVolumeControls";
 import { Icons } from "@/icons";
-import { setVolume } from "@/store/player/playerSlice";
+import { setVolume } from "@/store/player/player.slice";
 import { Button } from "@heroui/react";
 import { FaCaretLeft, FaCaretUp } from "react-icons/fa";
 import { FiRepeat } from "react-icons/fi";
@@ -106,7 +106,7 @@ export default function VolumeControls() {
                     variant="light"
                     className="hidden sm:flex"
                     onMouseEnter={() => {
-                        if (!isMobile) setOpen(true)
+                        setOpen(true)
                     }}
                 >
                     <FaCaretLeft size={25} />

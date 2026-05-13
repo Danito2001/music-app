@@ -1,8 +1,11 @@
+import { PlaybackSource } from "@/interfaces/common.interface";
 import { createSlice, nanoid, PayloadAction } from "@reduxjs/toolkit";
 
+
 interface QueueItem {
-  queueId: string;
-  songId: string;
+  	queueId: string;
+  	songId: string;
+	source: "manual" | "suggestion";
 }
 
 interface PlayerState {
@@ -15,6 +18,7 @@ interface PlayerState {
 	currentTime: number;
 	duration: number;
 	queue: QueueItem[];
+	currentSource: PlaybackSource;
 }
 
 const initialState: PlayerState = {
@@ -26,7 +30,8 @@ const initialState: PlayerState = {
 	volume: 0.4,
 	currentTime: 0,
 	duration: 0,
-	queue: []
+	queue: [],
+	currentSource: null
 };
 
 const playerSlice = createSlice({
@@ -77,10 +82,29 @@ const playerSlice = createSlice({
 		},
 
 		// Queue
+		setSuggestionsQueue: (state, action:PayloadAction<string[]>) => {
+			const existingIds = new Set(
+				state.queue.map(q => q.songId)
+			)
+
+			action.payload.forEach((id) => {
+
+				if (existingIds.has(id)) return;
+
+				state.queue.push({
+					queueId: nanoid(),
+					songId: id,
+					source: "suggestion"
+				})
+				existingIds.add(id)
+			})
+		},
+
 		addSongToQueue: (state, action:PayloadAction<string>) => {
 			state.queue.push({
 				queueId: nanoid(),
- 				songId: action.payload
+ 				songId: action.payload,
+				source: "manual"
 			})
 		},
 
@@ -88,7 +112,8 @@ const playerSlice = createSlice({
 			action.payload.forEach(songId => {
 				state.queue.push({
 					queueId: nanoid(),
-					songId
+					songId,
+					source: "manual"
 				})
 			})
 		},
@@ -97,18 +122,21 @@ const playerSlice = createSlice({
 
 			state.queue.splice(action.payload.index, 0, {
 				queueId: nanoid(),
-				songId: action.payload.songId
+				songId: action.payload.songId,
+				source: "manual"
 			})
 		},
 
-		shuffleQueue: (state, action:PayloadAction<string[]>) => {
-			const map = new Map(
-				state.queue.map(item => [item.songId, item])
-			)
-
+		shuffleQueue: (state, action:PayloadAction<QueueItem[]>) => {
 			state.queue = action.payload
-				.map(songId => map.get(songId))
-				.filter((item): item is QueueItem => Boolean(item))
+		},
+
+		setChangeSource: (state, action:PayloadAction<string>) => {
+			const song = state.queue.find(s => s.songId === action.payload)
+
+			if (song) {
+				song.source = "manual";
+			}
 		},
 
 		removeSongFromQueue: (state, action:PayloadAction<string>) => {
@@ -120,6 +148,10 @@ const playerSlice = createSlice({
 		clearQueue: (state) => {
 			state.queue = []
 		},
+
+		setPlaybackSource: (state, action:PayloadAction<PlaybackSource>) => {
+			state.currentSource = action.payload
+		}
 
 	},
 });
@@ -135,11 +167,14 @@ export const {
 	setVolume,
 	setCurrentTime,
 	setDuration,
+	setSuggestionsQueue,
 	addSongToQueue,
 	addPlaylistToQueue,
 	removeSongFromQueue,
+	setChangeSource,
 	insertSongToQueue,
 	shuffleQueue,
-	clearQueue
+	clearQueue,
+	setPlaybackSource
 } = playerSlice.actions;
 export default playerSlice.reducer;
