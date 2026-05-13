@@ -68,7 +68,7 @@ export default function SearchClient({ initialData, q }: { initialData: SearchRe
                     <Button
                         key={item.label}
                         size="sm"
-                        className={`${activeType !== item.value ? "bg-neutral-900" : "bg-white text-black"} rounded-md mx-2 py-1`}
+                        className={`${activeType !== item.value ? "bg-neutral-900 text-white" : "bg-white text-black"} rounded-md mx-2 py-1`}
                         onPress={() => setActiveType(item.value)}
                     >
                         <span className="text-sm">{item.label}</span>

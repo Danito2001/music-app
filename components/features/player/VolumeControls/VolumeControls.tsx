@@ -98,7 +98,7 @@ export default function VolumeControls() {
                         if (isMobile) setMobileOpen(prev => !prev)
                     }}
                 >
-                    <FaCaretLeft size={25} />
+                    <FaCaretLeft size={25} className="text-white" />
                 </Button>
 
                 <Button

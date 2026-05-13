@@ -234,7 +234,7 @@ export const playRandomTrack = (tracks: UiSong[]) => (dispatch: AppDispatch) => 
     const randomIndex = Math.floor(Math.random() * tracks.length);
     const randomId = tracks[randomIndex].id;
 
-    dispatch(playSongSmart(randomId, "suggestion-standalone"));
+    dispatch(playSongSmart(randomId, null, "suggestion-standalone"));
 };
 
 export const addSongToPlayNext =

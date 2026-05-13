@@ -32,8 +32,6 @@ export default function ChannelClient({ data }: { data: ArtistResponse }) {
         dispatch(upsertManyToCatalog(tracks))
     }, [dispatch, tracks])
 
-    console.log({tracks})
-
     return (
         <>
             <div className={`absolute overflow-hidden inset-0 z-0 h-[80vh] ${sidebarOpen && "lg:ml-[220px]"}`}>
