@@ -1,11 +1,11 @@
 "use client";
 
-import SongRowSuggestion from "../SongRowSuggestion/SongRowSuggestion";
 import { SongLargeView } from "../SongLargeView";
 import { useSongOptions } from "@/hooks/features/song/useSongOptions";
 import { OptionKeyResult, PlayType, ViewCard } from "@/interfaces/common.interface";
 import { UiSong } from "@/interfaces/song.interface";
 import { CollectionType } from "@/hooks/features/playlist/useCollectionType";
+import { SongRowSuggestion } from "../SongRowSuggestion";
 
 type CardProps = {
     song: UiSong;

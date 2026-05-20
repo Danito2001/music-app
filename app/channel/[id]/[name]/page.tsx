@@ -16,6 +16,7 @@ export default async function Channel({params}: {params: Promise<Params>}) {
 
     if (!response.ok) return null;
 
+
     return (
         <Suspense fallback={<Loading type="data"/>}>
             <ChannelClient data={response.data}/>

@@ -19,15 +19,25 @@ export const mapPlaylistToCollection = (playlist: Playlist, entities: Record<str
     })
 }
 
-export const mapAlbumToCollection = (album:UiAlbum): AlbumCollection => ({
-    id: album.id,
-    title: album.title,
-    cover: album.cover,
-    year: album.year,
-    songIds: album.songIds,
-    duration: album.duration,
-    type: "album"
-})
+export const mapAlbumToCollection = (album:UiAlbum): AlbumCollection | null => {
+
+    if (!album.artistName || !album.artistId) {
+        return null;
+    };
+
+    return {
+        id: album.id,
+        title: album.title,
+        cover: album.cover,
+        year: album.year,
+        songIds: album.songIds,
+        duration: album.duration,
+        artistId: album.artistId,
+        artistName: album.artistName,
+        type: "album"
+    }
+
+}
 
 export const mapLikedToCollection = (likedIds: string[]): LikedCollection => ({
     id: "LM",

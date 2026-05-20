@@ -12,7 +12,7 @@ export const mapDeezerArtistToUiArtist = (artist:DeezerArtist):UiArtist => {
 }
 
 export const mapDeezerAlbumToUiAlbum = 
-    (album:DeezerAlbum, artistId?: string): UiAlbum => {
+    (album:DeezerAlbum): UiAlbum => {
 
         if (!album || !album.id) {
             throw new Error("Invalid album data from API");
@@ -27,9 +27,9 @@ export const mapDeezerAlbumToUiAlbum =
             cover: [album.cover],
             title: album.title,
             year: year.toString(),
-            artistId,
-            artistName: album.artist?.name ?? "",
-            duration: album?.duration?.toString(),
+            artistId: album.artist?.id,
+            artistName: album.artist?.name,
+            duration: album.duration?.toString() ?? "",
             songIds: []
         }
 }

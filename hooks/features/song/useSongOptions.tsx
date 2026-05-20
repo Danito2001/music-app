@@ -35,9 +35,10 @@ export const useSongOptions = ({
     const player = usePlayerActions();
     const currentSongId = usePlayer().currentSongId;
 
+    const albumId = song.albumId;
+
     const isPinned = useSelector((state: RootState) => selectIsSongPinned(state, song.id));
 
-    
     const options: Option[] = [
         ...(isMobile ? [{ 
             icon: song.liked === "liked" ? Icons.Liked : Icons.Like,
@@ -45,10 +46,10 @@ export const useSongOptions = ({
             action: () => player.likedSong(song.id) }] : []
         ),
         { icon: Icons.Playlist, label: "Reproducir a continuación", action: () => player.addNextSong(song.id) },
-        { icon: Icons.Playlist, label: "Agregar a la fila", action: () => player.addSong(song.id) },
+        { icon: Icons.Playlist, label: "Agregar a la fila", action: () => player.addEndToQueue(song.id) },
         { icon: Icons.PlaylistAdd, label: "Guardar en una playlist", action: () => modalOpen({ type: "saveSong", props: {
             songId: song.id
-        } }) },
+        }}) },
         ...(playlistId && source === "playlist"
             ? [{icon: Icons.PlaylistRemove, label: "Quitar de la playlist", action: () => removeSong(playlistId, song.id)}]
             : []),
@@ -58,6 +59,9 @@ export const useSongOptions = ({
         ...(!path.includes(song.artistId)
             ? [{icon: Icons.User, label: "Ir al artista", action: () => player.goToArtist(song.artistId, song.artistName)}]
             : [] ),
+        ...(albumId
+            ? [{ icon: Icons.Disc, label: "Ir al álbum", action: () => player.goToAlbum(albumId) }]
+            : []), 
         isPinned
             ? { icon: Icons.Close, label: "Dejar de fijar en volver a escuchar", action: () => player.removePinned(song.id) }
             : { icon: Icons.Pin, label: "Fijar en volver a escuchar", action: () => player.addPinned(song.id) },

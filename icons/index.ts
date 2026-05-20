@@ -8,7 +8,7 @@ import { BsPinAngle, BsPinAngleFill, BsPencil } from "react-icons/bs";
 import { MdPlaylistPlay, MdPlaylistAdd, MdOutlinePlaylistRemove, MdOutlinePlaylistAddCheck, MdExplore  } from "react-icons/md";
 import { CiVolumeHigh, CiVolumeMute } from "react-icons/ci";
 import { AiFillSound } from "react-icons/ai";
-
+import { LuDisc3 } from "react-icons/lu";
 
 export const Icons = {
     Shuffle: FaShuffle,
@@ -38,5 +38,6 @@ export const Icons = {
     Mute: CiVolumeMute,
     Volume: CiVolumeHigh,
     Pencil: BsPencil,
-    Sound: AiFillSound
+    Sound: AiFillSound,
+    Disc: LuDisc3
 };

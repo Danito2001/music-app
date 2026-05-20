@@ -142,8 +142,38 @@ export const playSuggestionSong =
 	(songId: string) => (dispatch: AppDispatch) => {
 		dispatch(setChangeSource(songId));
 		dispatch(setCurrentSong(songId));
-		// dispatch(addSongToQueue(songId));
 	};
+
+export const addToManualQueue = 
+	(songId: string) => (dispatch: AppDispatch, getState: () => RootState) => {
+		const state = getState();
+
+		const alreadyManual = state.player.queue.some(
+			s => s.source === "manual" && s.songId === songId
+		)
+
+		if (alreadyManual) return { added: 0 }
+
+		const suggestionQueueSong = state.player.queue.find(
+      		s => s.source === "suggestion" && s.songId === songId
+    	);
+
+		if (suggestionQueueSong) {
+			dispatch(removeSongFromQueue(suggestionQueueSong.queueId))
+		}
+
+		const lastManualIndex = 
+			state.player.queue.findLastIndex(s => s.source === "manual")
+
+		const insertIndex = lastManualIndex === undefined ? 0 : lastManualIndex + 1
+
+		dispatch(insertSongToQueue({
+			index: insertIndex,
+			songId
+		}))
+
+		return { added: 1 }
+	}
 
 
 export const playLiked = 
@@ -202,8 +232,6 @@ export const playNextSong =
 			return;
 		}	
 
-		console.log({queueFromThunk: queue})
-
 		dispatch(setCurrentSong(queue[0].songId));
 	};
 
@@ -244,6 +272,12 @@ export const addSongToPlayNext =
 		const currentSongId = state.player.currentSongId;
 		const queue = state.player.queue.map((q) => q.songId);
 
+		const alreadyManual = state.player.queue.some(
+			s => s.source === "manual" && s.songId === songId
+		)
+
+		if (alreadyManual) return;
+
 		if (!currentSongId) {
 			dispatch(addSongToQueue(songId));
 			return;
@@ -273,16 +307,47 @@ export const removeSongFromQueueThunk =
 		if (currentSongId === songId) dispatch(playNextSong());
 	};
 
-export const addPlaylistToQueueEnd = 
+export const addPlaylistQueueThunk = 
     (playlistId: string) => 
     (dispatch: AppDispatch, getState: () => RootState) => {
 
         const state = getState();
+
         const songIds = getPlaylistSongIds(playlistId, state)
 
-        if (songIds.length === 0) return;
+		if (songIds.length === 0) return {
+			added: 0,
+			skipped: 0
+		};
 
-        dispatch(addPlaylistToQueue(songIds))
+		const existingSongIds = new Set(
+			state.player.queue.filter(s => s.source === "manual")
+			.map(s => s.songId)
+		)
+
+		const filteredSongs = songIds.filter(
+			id => !existingSongIds.has(id)
+		)
+
+		if (filteredSongs.length === 0) return {
+			added: 0,
+			skipped: 0
+		};
+
+		const lastManualIndex = 
+			state.player.queue.findLastIndex(s => s.source === "manual")
+
+		const insertIndex = lastManualIndex === undefined ? 0 : lastManualIndex + 1
+
+		dispatch(insertSongToQueue({
+			index: insertIndex,
+			songIds: filteredSongs
+		}))
+
+		return {
+			added: filteredSongs.length,
+      		skipped: songIds.length - filteredSongs.length
+		}
 }
 
 export const shuffledQueue = () => (dispatch: AppDispatch, getState: () => RootState) => {

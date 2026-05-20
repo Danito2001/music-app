@@ -17,6 +17,7 @@ import { OptionKeyResult, PlayType, ViewCard } from "@/interfaces/common.interfa
 import { usePlayer } from "@/hooks/features/player/usePlayer";
 import { useClickOutside } from "@/hooks/common/useClickOutside";
 import { CollectionType } from "@/hooks/features/playlist/useCollectionType";
+import { useScreen } from "@/context/screen.context";
 
 type SongRowData = {
     song: UiSong;
@@ -47,6 +48,8 @@ export default function SongRowSuggestion({ song, currentSongId, options, view, 
     useClickOutside(floating.menuRef, () => {
         floating.closeOptions()
     }, floating.optionsOpen)
+
+    const isMobile = useScreen();
     
     const isActive = currentSongId === song.id
     const isOpen = floating.optionsOpen === optionKey.optionKey
@@ -188,7 +191,7 @@ export default function SongRowSuggestion({ song, currentSongId, options, view, 
                             onPress={() => floating.handleOpen(optionKey.optionKey)}
                             isIconOnly
                             radius="full"
-                            className="hidden group-hover:flex items-center text-white hover:bg-white/30"
+                            className={`items-center text-white hover:bg-white/30 ${isMobile ? "flex" : "hidden group-hover:flex"}`}   
                         >
                             <Icons.Options size={20} />
                         </Button>
@@ -205,7 +208,7 @@ export default function SongRowSuggestion({ song, currentSongId, options, view, 
 
                 {/* duration */}
                     {config.showDuration && (
-                        <div className={`${view === "queue" && "group-hover:hidden"} text-end`}>
+                        <div className={`${view === "queue" && `${isMobile ? "" :"group-hover:hidden"}`} text-end`}>
                             <span className="text-sm opacity-85 text-white">
                                 {formatTime(song.duration)}
                             </span>

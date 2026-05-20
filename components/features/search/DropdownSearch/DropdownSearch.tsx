@@ -10,23 +10,32 @@ import { selectSearchSong } from "@/store/songs/songs.selector"
 import { selectSearchArtist } from "@/store/artist/artist.selector"
 import { SetStateAction } from "react"
 import { getOptionKey } from "@/helpers/getOptionKey"
+import { useClickOutside } from "@/hooks/common/useClickOutside"
 
 type DropdownProps = {
     dropdownRef: React.RefObject<HTMLDivElement | null>;
     recentSearch: SearchProps[];
-    setRecentSearch: React.Dispatch<SetStateAction<SearchProps[]>>
+    setRecentSearch: React.Dispatch<SetStateAction<SearchProps[]>>;
+    setIsActive: (value: boolean) => void;
+    isActive: boolean;
 }
 
 export default function DropdownSearch({
     dropdownRef,
     recentSearch,
-    setRecentSearch
+    setRecentSearch,
+    setIsActive,
+    isActive
 }: DropdownProps) {
 
     const searchSongs = useSelector(selectSearchSong)
     const searchArtist = useSelector(selectSearchArtist)
 
     const deleteRecentSearch = (searchId: string) => setRecentSearch(prev => prev.filter(item => item.id !== searchId))
+
+    useClickOutside(dropdownRef, () => {
+        setIsActive(false)
+    }, isActive)
 
     return (
         <div
@@ -36,19 +45,25 @@ export default function DropdownSearch({
             {recentSearch.map((item) => (
                 <div
                     key={item.id}
-                    className="flex justify-between items-center mb-4 hover:bg-white/10"
+                    className="flex justify-between items-center mb-4 w-full hover:bg-white/10"
                 >
-                    <Link href={`/search?q=${encodeURIComponent(item.value)}`}>
-                        <div className="flex items-center gap-x-2 px-2">
+                    <Link
+                        href={`/search?q=${encodeURIComponent(item.value)}`}
+                        className="flex-1"
+                        onClick={() => setIsActive(false)}
+                    >
+                        <div className="flex items-center gap-x-2 px-2 py-2 w-full">
                             <MdHistory size={22} />
                             <span>{item.value}</span>
                         </div>
                     </Link>
 
-                    <Button onMouseDown={(e) => {
-                        e.preventDefault()
-                        deleteRecentSearch(item.id)
-                    }}>
+                    <Button
+                        onMouseDown={(e) => {
+                            e.preventDefault()
+                            deleteRecentSearch(item.id)
+                        }}
+                    >
                         <Icons.Trash size={18} />
                     </Button>
                 </div>

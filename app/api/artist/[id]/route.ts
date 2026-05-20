@@ -30,10 +30,9 @@ export async function GET(
             axiosServer.get<{ data: DeezerArtist[] }>(`/artist/${id}/related`),
         ])
 
-
         const tracks = topTracks.data.data.map(track => mapDeezerTrackToUiSong(track));
 
-        const formattedAlbums = albums.data.data.map(album => mapDeezerAlbumToUiAlbum(album, id));
+        const formattedAlbums = albums.data.data.map(album => mapDeezerAlbumToUiAlbum(album));
 
         const formattedRelated= relatedArtist.data.data.map(artist => mapDeezerArtistToUiArtist(artist));
 

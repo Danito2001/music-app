@@ -15,6 +15,7 @@ import { UiAlbum } from "@/interfaces/song.interface";
 import { useClickOutside } from "@/hooks/common/useClickOutside";
 import { CollectionType } from "@/hooks/features/playlist/useCollectionType";
 import { EmptyCover } from "../EmptyCover";
+import Link from "next/link";
 
 interface CoverProps {
     collection: CollectionView | null;
@@ -76,7 +77,16 @@ export default function PlaylistCover({ collection, playlistId, album, source }:
 
             <div>
                 <h3 className="font-semibold text-3xl">{collection.title}</h3>
-                <span className="text-sm">Nombre de usuario</span>
+                {collection.type === "album" ? (
+                    <Link
+                        href={`/channel/${collection.artistId}/${collection.artistName.toLowerCase().replace(/\s+/g, "-")}`} 
+                        className="underline"
+                    >
+                        {collection.artistName}
+                    </Link>
+                ) : (
+                    <span className="text-sm">Nombre de usuario</span>
+                )}
             </div>
 
             <div className="flex flex-col">

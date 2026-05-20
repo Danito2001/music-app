@@ -4,7 +4,7 @@ import { toast } from "@/helpers/toast";
 import { SourceType } from "@/interfaces/collection.interface";
 import { PlayType } from "@/interfaces/common.interface";
 import { UiSong } from "@/interfaces/song.interface";
-import { addPlaylistToQueueEnd, addSongToPlayNext, playFirstSongFromPlaylist, playNextSong, playPrevSong, playRandomSongFromPlaylist, playRandomTrack, playSongSmart, playStandaloneSong, playSuggestionSong, removeSongFromQueueThunk, shuffledQueue } from "@/store/player/player.thunk";
+import { addPlaylistQueueThunk, addSongToPlayNext, addToManualQueue, playFirstSongFromPlaylist, playNextSong, playPrevSong, playRandomSongFromPlaylist, playRandomTrack, playSongSmart, playStandaloneSong, playSuggestionSong, removeSongFromQueueThunk, shuffledQueue } from "@/store/player/player.thunk";
 import { clearQueue, setCurrentSong, setRepeatMode, stop } from "@/store/player/player.slice";
 import { addSuggestionToPlaylist, dislikedSongThunk, likedSongThunk } from "@/store/songs/songs.thunk";
 import { addSongToPinned, removeSongFromPinned } from "@/store/songs/songs.slice";
@@ -36,7 +36,6 @@ export default function usePlayerActions() {
         setTimeout(() => {
             dispatch(setCurrentSong(null))
             dispatch(clearQueue())
-            // dispatch(clearPlaylistSuggestions())
             dispatch(stop())
         }, 400);
     }
@@ -63,7 +62,9 @@ export default function usePlayerActions() {
         }
     }
 
-    const goToArtist = (artistId: string, artistName: string) => router.push(`/channel/${artistId}/${artistName}`)
+    const goToArtist = (artistId: string, artistName: string) => router.push(`/channel/${artistId}/${artistName}`);
+    
+    const goToAlbum = (albumId: string) => router.push(`/playlist?list=${albumId}&type=album`);
 
     const addSong = (songId: string) => dispatch(playSuggestionSong(songId));
 
@@ -98,11 +99,32 @@ export default function usePlayerActions() {
     const selectRandomSong = (playlistId: string, type: SourceType) => dispatch(playRandomSongFromPlaylist(playlistId, type))
 
     const addPlaylistQueue = (playlistId: string) => {
-        toast("Playlist Añadida", "La playlist se añadió a la fila")
-        dispatch(addPlaylistToQueueEnd(playlistId))
+        const result = dispatch(addPlaylistQueueThunk(playlistId))
+        
+        if (result.added > 0) {
+            toast("Playlist Añadida", `${result?.added} canciones agregadas`)
+        }
+        
+        if (result.skipped > 0) {
+            toast("Playlist Añadida", `${result.skipped} ya estaban en la cola`)
+        }
+
+        if (result.added === 0 && result.skipped === 0) {
+            toast("", "La playlist ya esta en la cola")
+        }
     }
 
     const playPlaylist = (playlistId: string, type: SourceType) => dispatch(playFirstSongFromPlaylist(playlistId, type))
+
+    const addEndToQueue = (songId: string) => {
+        const result = dispatch(addToManualQueue(songId)) 
+
+        if (result.added > 0) {
+            toast("Canción Añadida", "La canción se añadio a la cola")
+        } else {
+            toast("", "La canción ya se encuentra en la cola")
+        }
+    }
 
     return {
         clearQueueAction,
@@ -112,6 +134,7 @@ export default function usePlayerActions() {
         addNextSong,
         setLoop,
         goToArtist,
+        goToAlbum,
         repeat,
         addSong,
         addSuggestion,
@@ -125,6 +148,7 @@ export default function usePlayerActions() {
         removePinned,
         selectRandomSong,
         addPlaylistQueue,
-        playPlaylist
+        playPlaylist,
+        addEndToQueue
     }
 }

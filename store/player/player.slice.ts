@@ -118,13 +118,20 @@ const playerSlice = createSlice({
 			})
 		},
 
-		insertSongToQueue: (state, action:PayloadAction<{ songId: string, index: number }>) => {
+		insertSongToQueue: (state, action:PayloadAction<{ songId?: string, songIds?: string[], index: number }>) => {
 
-			state.queue.splice(action.payload.index, 0, {
+			const songIds = action.payload.songIds
+				?? (action.payload.songId
+				? [action.payload.songId]
+				: []);
+
+			const songs = songIds.map(songId => ({
 				queueId: nanoid(),
-				songId: action.payload.songId,
-				source: "manual"
-			})
+				songId,
+				source: "manual" as const
+			}));
+
+			state.queue.splice(action.payload.index, 0, ...songs);
 		},
 
 		shuffleQueue: (state, action:PayloadAction<QueueItem[]>) => {
@@ -144,7 +151,7 @@ const playerSlice = createSlice({
 				({queueId}) => queueId !== action.payload
 			)
 		},
-
+		
 		clearQueue: (state) => {
 			state.queue = []
 		},

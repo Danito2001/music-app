@@ -81,7 +81,7 @@
                                 source={source}
                             />
                         ) : (
-                            <h2 className="font-semibold text-xl">Canciones más populares</h2>
+                            <h2 className="font-semibold text-xl text-white">Canciones más populares</h2>
                         )}
 
                         <div className="flex flex-col gap-y-6 lg:w-full">

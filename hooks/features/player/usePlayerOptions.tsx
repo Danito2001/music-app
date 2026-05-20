@@ -17,7 +17,7 @@ export const usePlayerOptions = (
     currentSong: OptionProps["currentSong"], 
     queueSongs: OptionProps["queueSongs"]
 ) => {
-    const { addSong, addNextSong, removeSong, goToArtist, clearQueueAction, addPinned, removePinned, likedSong } = usePlayerActions();
+    const player = usePlayerActions();
     const modalOpen = useUIContext().modalOpen;
     const path = usePathname();
     const isMobile = useScreen()
@@ -29,27 +29,31 @@ export const usePlayerOptions = (
     );
 
     const queueId = currentQueueItem?.queueId;
+    const albumId = currentSong.albumId;
 
     return [
         ...(isMobile ? [{ 
             icon: currentSong.liked === "liked" ? Icons.Liked : Icons.Like,
             label: "Agregar a Me Gusta", 
-            action: () => likedSong(currentSong.id) }] : []
+            action: () => player.likedSong(currentSong.id) }] : []
         ),
-        { icon: Icons.Playlist, label: "Reproducir a continuación", action: () => addNextSong(currentSong.id) }, 
-        { icon: Icons.Playlist, label: "Agregar a la fila", action: () => addSong(currentSong.id) }, 
+        { icon: Icons.Playlist, label: "Reproducir a continuación", action: () => player.addNextSong(currentSong.id) }, 
+        { icon: Icons.Playlist, label: "Agregar a la fila", action: () => player.addEndToQueue(currentSong.id) }, 
         { 
             icon: Icons.PlaylistAdd, label: "Guardar en una playlist", 
             action: () => modalOpen({ type: "saveSong", props: { songId: currentSong.id } })
         },
         ...(queueId 
-            ? [{ icon: Icons.PlaylistRemove, label: "Quitar de la fila", action: () => removeSong(queueId, currentSong.id), }] 
+            ? [{ icon: Icons.PlaylistRemove, label: "Quitar de la fila", action: () => player.removeSong(queueId, currentSong.id), }] 
             : []), 
         ...(!path.includes(currentSong.artistId) 
-            ? [{ icon: Icons.User, label: "Ir al artista", action: () => goToArtist(currentSong.artistId, currentSong.artistName) }] 
+            ? [{ icon: Icons.User, label: "Ir al artista", action: () => player.goToArtist(currentSong.artistId, currentSong.artistName) }] 
             : []),
+        ...(albumId
+            ? [{ icon: Icons.Disc, label: "Ir al álbum", action: () => player.goToAlbum(albumId) }]
+            : []), 
         alreadyPinned 
-            ? { icon: Icons.Close, label: "Dejar de fijar en volver a escuchar", action: () => removePinned(currentSong.id) } 
-            : { icon: Icons.Pin, label: "Fijar en volver a escuchar", action: () => addPinned(currentSong.id) }, { icon: Icons.Close, label: "Descartar fila", action: () => clearQueueAction() },
+            ? { icon: Icons.Close, label: "Dejar de fijar en volver a escuchar", action: () => player.removePinned(currentSong.id) } 
+            : { icon: Icons.Pin, label: "Fijar en volver a escuchar", action: () => player.addPinned(currentSong.id) }, { icon: Icons.Close, label: "Descartar fila", action: () => player.clearQueueAction() },
     ];
 };

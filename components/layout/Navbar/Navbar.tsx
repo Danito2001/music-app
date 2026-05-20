@@ -59,8 +59,8 @@ export default function Navbar() {
                 }
                 return [newSearch, ...filtered].slice(0, 6)
             })
-            setSearch("")
-            setIsActive(false)
+            setSearch("");
+            setIsActive(false);
             router.push(`/search?q=${encodeURIComponent(search)}&limit=10`);
         }
     }
@@ -123,6 +123,8 @@ export default function Navbar() {
                                     dropdownRef={dropdownRef}
                                     recentSearch={recentSearch}
                                     setRecentSearch={setRecentSearch}
+                                    setIsActive={setIsActive}
+                                    isActive={isActive}
                                 />
                             )}
                         </div>
@@ -146,6 +148,8 @@ export default function Navbar() {
                                         dropdownRef={dropdownRef}
                                         recentSearch={recentSearch}
                                         setRecentSearch={setRecentSearch}
+                                        setIsActive={setIsActive}
+                                        isActive={isActive}
                                     />
                                 )}
                             </div>

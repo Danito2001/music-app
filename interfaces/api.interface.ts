@@ -74,8 +74,10 @@ export interface DeezerAlbum {
     cover: string;
     title: string;
     release_date?: string;
-    duration: number;
-    artist: {
+    duration?: number;
+
+    artist?: {
+        id?: string;
         name?: string;
     }
 }

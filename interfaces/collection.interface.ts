@@ -21,6 +21,8 @@ export interface PlaylistCollection extends BaseCollection {
 }
 
 export interface AlbumCollection extends BaseCollection {
+    artistId: string;
+    artistName: string;
     type: "album";
 }
 

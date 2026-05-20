@@ -3,7 +3,7 @@ import { useEffect } from "react";
 export function useClickOutside(
 	ref: React.RefObject<HTMLDivElement | null>,
 	handler: () => void,
-	active: string | null
+	active: string | boolean | null
 ) {
 	useEffect(() => {
 		if (!active) return;

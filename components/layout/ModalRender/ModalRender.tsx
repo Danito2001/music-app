@@ -1,7 +1,7 @@
 import { useUIContext } from "@/context/ui.context"
-import SaveSongModal from "../../features/song/SaveSongModal/SaveSongModal";
 import ConfigModal from "../../common/ConfigModal/ConfigModal";
 import { PlaylistModal } from "../../features/playlist/PlaylistModal";
+import { SaveSongModal } from "@/components/features/song/SaveSongModal";
 
 
 export default function ModalRender() {
