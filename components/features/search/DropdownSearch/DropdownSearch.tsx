@@ -11,7 +11,6 @@ import { selectSearchArtist } from "@/store/artist/artist.selector"
 import { SetStateAction } from "react"
 import { getOptionKey } from "@/helpers/getOptionKey"
 import { useClickOutside } from "@/hooks/common/useClickOutside"
-import { useFloatingPosition } from "@/hooks/common/useFloatingPosition"
 
 type DropdownProps = {
     dropdownRef: React.RefObject<HTMLDivElement | null>;
@@ -31,14 +30,12 @@ export default function DropdownSearch({
 
     const searchSongs = useSelector(selectSearchSong)
     const searchArtist = useSelector(selectSearchArtist)
-    const floating = useFloatingPosition();
     
 
     const deleteRecentSearch = (searchId: string) => setRecentSearch(prev => prev.filter(item => item.id !== searchId))
 
     useClickOutside(dropdownRef, () => {
         setIsActive(false)
-        floating.closeOptions()
     }, isActive)
 
     return (

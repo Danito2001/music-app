@@ -5,7 +5,7 @@ import { useUIContext } from "@/context/ui.context";
 import { useState, useEffect, useRef } from "react";
 import { Icons } from "@/icons";
 import { CiSearch } from "react-icons/ci";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { nanoid } from "@reduxjs/toolkit";
 import { searchTracks } from "@/store/songs/songs.thunk";
 import { useDispatch } from "react-redux";
@@ -24,6 +24,7 @@ export default function Navbar() {
 
     const { searchOpen, toggleSearch, sidebarOpen, toggleSidebar, playerOpen } = useUIContext();
     const scrolled = useScrolled();
+    const pathname = usePathname();
 
     const router = useRouter();
     const dispatch = useDispatch<AppDispatch>();
@@ -41,6 +42,10 @@ export default function Navbar() {
 
     }, [search, dispatch])
 
+    useEffect(() => {
+        setIsActive(false)
+    }, [pathname])
+    
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearch(e.target.value)

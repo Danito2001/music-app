@@ -3,17 +3,16 @@
 import { Icons } from "@/icons";
 import { Button } from "@heroui/react";
 import Image from "next/image";
-import { PlaybackOptions } from "../../player/PlaybackOptions";
 import usePlayerActions from "@/hooks/features/player/usePlayerActions";
 import Link from "next/link";
 import { useDispatch } from "react-redux";
 import { pause, play } from "@/store/player/player.slice";
-import { useFloatingPosition } from "@/hooks/common/useFloatingPosition";
 import { UiSong } from "@/interfaces/song.interface";
 import { Option } from "@/interfaces/ui.interface";
 import { OptionKeyResult, PlayType } from "@/interfaces/common.interface";
 import { usePlayer } from "@/hooks/features/player/usePlayer";
 import { useClickOutside } from "@/hooks/common/useClickOutside";
+import { useFloatingOptions } from "@/context/playback.context";
 
 type SongLargeData = {
     song: Omit<UiSong, "liked">;
@@ -28,15 +27,14 @@ export default function SongLargeView({ song, options, currentSongId, mode, opti
 
     const dispatch = useDispatch();
     const player = usePlayerActions();
-    const floating = useFloatingPosition();
+    const { openOptions, closeOptions, state, menuRef } = useFloatingOptions();
     const isPlaying = usePlayer().isPlaying;
 
-    useClickOutside(floating.menuRef, () => {
-        floating.closeOptions()
-    }, floating.optionsOpen)
+    useClickOutside(menuRef, () => {
+        closeOptions()
+    }, state.isOpen)
 
     const isActive = currentSongId === song.id
-    const isOpen = floating.optionsOpen === optionKey.optionKey
 
     return (
         <div className="flex flex-col shrink-0 w-40 text-white">
@@ -59,7 +57,7 @@ export default function SongLargeView({ song, options, currentSongId, mode, opti
                                 songId: song.id,
                                 mode,
                                 playlistId: null
-                              })
+                            })
                             : isPlaying
                                 ? dispatch(pause())
                                 : dispatch(play())
@@ -70,7 +68,7 @@ export default function SongLargeView({ song, options, currentSongId, mode, opti
                     {isActive && isPlaying && (
                         <>
                             <Icons.Sound size={40} className="group-hover:opacity-0" />
-                            <Icons.Pause size={40} className="absolute inset-0 opacity-0 mx-auto group-hover:opacity-100"/>
+                            <Icons.Pause size={40} className="absolute inset-0 opacity-0 mx-auto group-hover:opacity-100" />
                         </>
                     )}
 
@@ -81,21 +79,19 @@ export default function SongLargeView({ song, options, currentSongId, mode, opti
 
                 <div className="absolute right-0 top-0">
                     <Button
-                        ref={floating.buttonRef}
-                        onPress={() => floating.handleOpen(optionKey.optionKey)}
-                        isIconOnly
+                        onClick={(e) => {
+                            openOptions({
+                                optionKey: optionKey.optionKey,
+                                options,
+                                anchorEl: e.currentTarget as HTMLElement
+                            });
+                        }}
                         radius="full"
+                        isIconOnly
                         className="group-hover:opacity-100 opacity-0 flex items-center text-white hover:bg-white/30"
                     >
                         <Icons.Options size={20} />
                     </Button>
-                    <PlaybackOptions
-                        open={isOpen}
-                        options={options}
-                        onSelect={floating.handleOptionSelect}
-                        position={floating.position}
-                        optionRef={floating.menuRef}
-                    />
                 </div>
             </div>
             <div className="text-sm">

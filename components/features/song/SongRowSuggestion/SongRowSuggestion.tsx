@@ -3,14 +3,12 @@
 import { Icons } from "@/icons";
 import { Button } from "@heroui/react";
 import Image from "next/image";
-import { PlaybackOptions } from "../../player/PlaybackOptions";
 import usePlayerActions from "@/hooks/features/player/usePlayerActions";
 import { MdOutlinePlaylistAdd } from "react-icons/md";
 import { formatTime } from "@/helpers/formatTime";
 import Link from "next/link";
 import { pause, play } from "@/store/player/player.slice";
 import { useDispatch } from "react-redux";
-import { useFloatingPosition } from "@/hooks/common/useFloatingPosition";
 import { UiSong } from "@/interfaces/song.interface";
 import { Option } from "@/interfaces/ui.interface";
 import { OptionKeyResult, PlayType, ViewCard } from "@/interfaces/common.interface";
@@ -18,6 +16,7 @@ import { usePlayer } from "@/hooks/features/player/usePlayer";
 import { useClickOutside } from "@/hooks/common/useClickOutside";
 import { CollectionType } from "@/hooks/features/playlist/useCollectionType";
 import { useScreen } from "@/context/screen.context";
+import { useFloatingOptions } from "@/context/playback.context";
 
 type SongRowData = {
     song: UiSong;
@@ -43,20 +42,19 @@ export default function SongRowSuggestion({ song, currentSongId, options, view, 
     const dispatch = useDispatch();
     const player = usePlayerActions();
     const isPlaying = usePlayer().isPlaying;
-    const floating = useFloatingPosition();
 
-    useClickOutside(floating.menuRef, () => {
-        floating.closeOptions()
-    }, floating.optionsOpen)
+    const { openOptions, closeOptions, state, menuRef } = useFloatingOptions();
+
+    useClickOutside(menuRef, () => {
+        closeOptions()
+    }, state.isOpen)
 
     const isMobile = useScreen();
-    
     const isActive = currentSongId === song.id
-    const isOpen = floating.optionsOpen === optionKey.optionKey
 
     // Controla que elementos mostrar segun el contexto
     const variants: Record<Exclude<ViewCard, "large">, CardVariantConfig> = {
-        playlist: { showLike: true, showOptions: true, showDuration: true},
+        playlist: { showLike: true, showOptions: true, showDuration: true },
         queue: { showOptions: true, showDuration: true },
         search: { showOptions: true, showDuration: false },
         suggestion: { showLike: true, showAddPlaylist: true },
@@ -82,19 +80,19 @@ export default function SongRowSuggestion({ song, currentSongId, options, view, 
                             className="rounded-md shrink-0"
                         />
 
-                        <div className="group-hover:bg-black/80 absolute inset-0"/>
-                        
+                        <div className="group-hover:bg-black/80 absolute inset-0" />
+
                         <Button
                             className="absolute opacity-0 group-hover:opacity-100"
-                            onPress={() => 
+                            onPress={() =>
                                 !isActive
                                     ? player.playSong({
                                         songId: song.id,
                                         mode,
                                         source,
                                         playlistId
-                                      })
-                                    : isPlaying 
+                                    })
+                                    : isPlaying
                                         ? dispatch(pause())
                                         : dispatch(play())
                             }
@@ -109,9 +107,9 @@ export default function SongRowSuggestion({ song, currentSongId, options, view, 
                             {song.title}
                         </h4>
 
-                        <div className="flex gap-x-2 min-w-0 opacity-80 text-xs md:text-sm">  
+                        <div className="flex gap-x-2 min-w-0 opacity-80 text-xs md:text-sm">
 
-                            { optionKey.type === "song-search" && <span>Canción •</span>}
+                            {optionKey.type === "song-search" && <span>Canción •</span>}
 
                             <Link
                                 className="hover:underline truncate"
@@ -187,34 +185,31 @@ export default function SongRowSuggestion({ song, currentSongId, options, view, 
                 {config.showOptions && (
                     <div className="">
                         <Button
-                            ref={floating.buttonRef}
-                            onPress={() => floating.handleOpen(optionKey.optionKey)}
-                            isIconOnly
+                            onClick={(e) => {
+                                openOptions({
+                                    optionKey: optionKey.optionKey,
+                                    options,
+                                    anchorEl: e.currentTarget as HTMLElement
+                                });
+                            }}
                             radius="full"
-                            className={`items-center text-white hover:bg-white/30 ${isMobile ? "flex" : "hidden group-hover:flex"}`}   
+                            isIconOnly
+                            className={`items-center text-white hover:bg-white/30 ${isMobile ? "flex" : "hidden group-hover:flex"}`} 
                         >
                             <Icons.Options size={20} />
                         </Button>
-
-                        <PlaybackOptions
-                            open={isOpen}
-                            options={options}
-                            onSelect={floating.handleOptionSelect}
-                            position={floating.position}
-                            optionRef={floating.menuRef}
-                        />
                     </div>
                 )}
 
                 {/* duration */}
-                    {config.showDuration && (
-                        <div className={`${view === "queue" && `${isMobile ? "" :"group-hover:hidden"}`} text-end`}>
-                            <span className="text-sm opacity-85 text-white">
-                                {formatTime(song.duration)}
-                            </span>
-                        </div>
-                    )}
-            </div> 
+                {config.showDuration && (
+                    <div className={`${view === "queue" && `${isMobile ? "" : "group-hover:hidden"}`} text-end`}>
+                        <span className="text-sm opacity-85 text-white">
+                            {formatTime(song.duration)}
+                        </span>
+                    </div>
+                )}
+            </div>
         </div>
     )
 }

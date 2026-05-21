@@ -6,14 +6,14 @@ import { createPortal } from "react-dom";
 interface OptionsMenuProps {
     open: boolean;
     options: Option[];
-    onSelect: (action: () => void) => void;
-    position: { top: number; left: number; };
+    onSelect: (option: Option) => void;
+    position: { top: number; left: number; } | null;
     optionRef: React.RefObject<HTMLDivElement | null>
 }
 
 
 export default function PlaybackOptions({ open, options, onSelect, position, optionRef }: OptionsMenuProps) {
-    if (!open) return null;
+    if (!open || !position) return null;
 
     return (
         createPortal(
@@ -27,7 +27,7 @@ export default function PlaybackOptions({ open, options, onSelect, position, opt
                 {options.map((opt) => (
                     <Button
                         key={opt.label}
-                        onPress={() => onSelect(opt.action)}
+                        onPress={() => onSelect(opt)}
                         className="flex justify-start items-center w-full p-4 hover:bg-neutral-700 text-start text-xs text-white"
                         startContent={<opt.icon size={18}/>}
                     >

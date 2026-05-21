@@ -2,13 +2,11 @@ import { useUIContext } from "@/context/ui.context";
 import { getGridImages } from "@/helpers/getGridImages";
 import { Icons } from "@/icons";
 import { Button } from "@heroui/react";
-import { PlaybackOptions } from "../../player/PlaybackOptions";
 import usePlayerActions from "@/hooks/features/player/usePlayerActions";
 import { formatTime } from "@/helpers/formatTime";
 import { LikedCover } from "../LikedCover";
 import { CoverImage } from "../CoverImage/CoverImage";
 import { usePlaylistOptions } from "@/hooks/features/playlist/usePlaylistOptions";
-import { useFloatingPosition } from "@/hooks/common/useFloatingPosition";
 import { getOptionKey } from "@/helpers/getOptionKey";
 import { CollectionView } from "@/interfaces/collection.interface";
 import { UiAlbum } from "@/interfaces/song.interface";
@@ -16,6 +14,7 @@ import { useClickOutside } from "@/hooks/common/useClickOutside";
 import { CollectionType } from "@/hooks/features/playlist/useCollectionType";
 import { EmptyCover } from "../EmptyCover";
 import Link from "next/link";
+import { useFloatingOptions } from "@/context/playback.context";
 
 interface CoverProps {
     collection: CollectionView | null;
@@ -25,24 +24,23 @@ interface CoverProps {
 }
 
 export default function PlaylistCover({ collection, playlistId, album, source }: CoverProps) {
-    
-    
+
+
     const modalOpen = useUIContext().modalOpen;
     const playPlaylist = usePlayerActions().playPlaylist;
-    const floating = useFloatingPosition();
-    const { isAlbum, options } = usePlaylistOptions({playlistId, source});
-    
-    useClickOutside(floating.menuRef, () => {
-        floating.closeOptions()
-    }, floating.optionsOpen)
-    
+    const { openOptions, closeOptions, state, menuRef } = useFloatingOptions();
+    const { isAlbum, options } = usePlaylistOptions({ playlistId, source });
+
+    useClickOutside(menuRef, () => {
+        closeOptions()
+    }, state.isOpen)
+
     if (!collection) {
-        return <EmptyCover/>
+        return <EmptyCover />
     }
 
     const optionKey = getOptionKey("playlist")
 
-    const isOpen = floating.optionsOpen === optionKey.optionKey
     const isPlaylist = collection.type === "playlist";
     const gridImages = getGridImages(collection.cover)
 
@@ -50,9 +48,9 @@ export default function PlaylistCover({ collection, playlistId, album, source }:
         <div className="flex flex-col items-center gap-y-2 text-center w-full lg:w-1/3 text-white">
 
             <div className="relative">
-                {playlistId === "LM" 
-                    ? <LikedCover/>
-                    : <CoverImage images={gridImages} size="lg"/>
+                {playlistId === "LM"
+                    ? <LikedCover />
+                    : <CoverImage images={gridImages} size="lg" />
                 }
 
                 {isPlaylist && (
@@ -79,7 +77,7 @@ export default function PlaylistCover({ collection, playlistId, album, source }:
                 <h3 className="font-semibold text-3xl">{collection.title}</h3>
                 {collection.type === "album" ? (
                     <Link
-                        href={`/channel/${collection.artistId}/${collection.artistName.toLowerCase().replace(/\s+/g, "-")}`} 
+                        href={`/channel/${collection.artistId}/${collection.artistName.toLowerCase().replace(/\s+/g, "-")}`}
                         className="underline"
                     >
                         {collection.artistName}
@@ -109,22 +107,20 @@ export default function PlaylistCover({ collection, playlistId, album, source }:
                 </Button>
 
                 <Button
-                    ref={floating.buttonRef}
-                    onPress={() => floating.handleOpen(optionKey.optionKey)}
-                    isIconOnly
+                    onClick={(e) => {
+                        openOptions({
+                            optionKey: optionKey.optionKey,
+                            options,
+                            anchorEl: e.currentTarget as HTMLElement
+                        });
+                    }}
                     radius="full"
+                    isIconOnly
                     className="flex items-center text-white bg-neutral-800"
                 >
                     <Icons.Options size={20} />
                 </Button>
 
-                <PlaybackOptions
-                    options={options}
-                    open={isOpen}
-                    onSelect={floating.handleOptionSelect}
-                    position={floating.position}
-                    optionRef={floating.menuRef}
-                />
             </div>
         </div>
     )

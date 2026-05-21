@@ -57,6 +57,7 @@ export function UIProvider({ children }: { children: React.ReactNode }) {
 
 	useEffect(() => {
 		setPlayerOpen(false);
+		
 	}, [pathname]);
 
 	const value = useMemo(() => ({
